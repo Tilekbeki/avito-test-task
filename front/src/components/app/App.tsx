@@ -7,7 +7,7 @@ import AdsListPage from '../../pages/AdsListPage/AdsListPage';
 import AdEditPage from '../../pages/AdEditPage/AdEditPage';
 import AdViewPage from '../../pages/AdviewPage/AdViewPage';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
 function App() {
   const [count, setCount] = useState(0);
@@ -15,22 +15,6 @@ function App() {
   return (
     <BrowserRouter>
       <Layout className="app-layout">
-        <Header className="app-header">
-          <nav className="navigation">
-            <ul>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link to="/ads">Объявления</Link>
-              </li>
-              <li>
-                <Link to="/ads/create">Создать объявление</Link>
-              </li>
-            </ul>
-          </nav>
-        </Header>
-
         <Content className="app-content">
           <div className="container">
             <Routes>
