@@ -2,6 +2,8 @@ import { Alert } from 'antd';
 import img from '../../assets/cover-big.png';
 import { Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
+import styles from './AdViewPage.module.scss';
+
 const AdViewPage = () => {
   return (
     <div className="bg-white min-h-screen">
@@ -24,7 +26,7 @@ const AdViewPage = () => {
         </div>
       </div>
       <hr className="bg-[#F0F0F0] border-[#F0F0F0] mb-8" />
-      <div className="flex gap-8">
+      <div className="flex gap-8 mb-8">
         <div className="w-[480px] h-[360px]">
           <img src={img} alt="товара картинка" width="100%" height="100%" />
         </div>
@@ -51,6 +53,13 @@ const AdViewPage = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="w-[480px] flex flex-col gap-4">
+        <div className="font-medium">Описание</div>
+        <div>
+          Продаю свой MacBook Pro 16" (2021) на чипе M1 Pro. Состояние отличное, работал бережно.
+          Мощности хватает на всё: от сложного монтажа до кода, при этом ноутбук почти не греется.
         </div>
       </div>
     </div>

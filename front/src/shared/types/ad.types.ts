@@ -1,5 +1,14 @@
 export type Category = 'auto' | 'real_estate' | 'electronics';
 
+export interface Ad {
+  id: string;
+  category: Category;
+  title: string;
+  price: number;
+  description?: string;
+  needsRevision: boolean;
+}
+
 export type AutoParams = {
   brand?: string;
   model?: string;
@@ -42,3 +51,19 @@ export type Item = {
 export type ItemWithRevision = Item & {
   needsRevision: boolean;
 };
+
+
+export interface GetAdsParams {
+  q?: string;
+  limit?: number;
+  skip?: number;
+  needsRevision?: boolean;
+  categories?: Category[];
+  sortColumn?: 'title' | 'createdAt';
+  sortDirection?: 'asc' | 'desc';
+}
+
+export interface GetAdsResponse {
+  items: Ad[];
+  total: number;
+}

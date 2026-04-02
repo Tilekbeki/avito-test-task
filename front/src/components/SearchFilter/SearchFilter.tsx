@@ -1,14 +1,10 @@
 import { Input, Radio, Select, type SelectProps } from 'antd';
 import { AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
+import { setSearchText, setSortBy, setViewMode } from '../../store/slices/searchFilter.slice';
+import { applyFiltersAndSort } from '../../store/slices/ads.slice';
 
-interface SearchFilterProps {
-  className?: string;
-}
-
-const onChange = () => {
-  console.log('change');
-};
 const options: SelectProps['options'] = [
   {
     label: 'По названию',
@@ -33,25 +29,51 @@ const options: SelectProps['options'] = [
   },
 ];
 
-const SearchFilter = ({ className }: SearchFilterProps) => {
-  const [sortBy, setSortBy] = useState('name_asc');
+const SearchFilter = () => {
+  const dispatch = useDispatch();
+  const searchFilter = useSelector((state: RootState) => state.searchFilter);
+  const filterPanel = useSelector((state: RootState) => state.filterPanel);
+
+  const handleSearchChange = (value: string) => {
+    dispatch(setSearchText(value));
+    dispatch(
+      applyFiltersAndSort({ filterPanel, searchFilter: { ...searchFilter, searchText: value } })
+    );
+  };
+
+  const handleSortChange = (value: string) => {
+    dispatch(setSortBy(value));
+    dispatch(
+      applyFiltersAndSort({ filterPanel, searchFilter: { ...searchFilter, sortBy: value } })
+    );
+  };
+
+  const handleViewChange = (e: any) => {
+    dispatch(setViewMode(e.target.value));
+  };
 
   return (
-    <div className={`p-[12px] bg-white rounded-lg flex gap-[24px] items-center ${className || ''}`}>
-      <Input.Search placeholder="Найти объявление..." variant="filled" className="flex-1" />
-      <Radio.Group
-        onChange={onChange}
-        defaultValue="a"
-        className="flex-shrink-0" // Запрещает сжатие
-      >
-        <Radio.Button value="a">
+    <div className="p-[12px] bg-white rounded-lg flex gap-[24px] items-center">
+      <Input.Search
+        placeholder="Найти объявление..."
+        value={searchFilter.searchText}
+        onChange={(e) => handleSearchChange(e.target.value)}
+        className="flex-1"
+      />
+      <Radio.Group onChange={handleViewChange} value={searchFilter.viewMode}>
+        <Radio.Button value="grid">
           <AppstoreOutlined />
         </Radio.Button>
-        <Radio.Button value="b">
+        <Radio.Button value="list">
           <UnorderedListOutlined />
         </Radio.Button>
       </Radio.Group>
-      <Select value={sortBy} onChange={setSortBy} style={{ width: 240 }} options={options} />
+      <Select
+        value={searchFilter.sortBy}
+        onChange={handleSortChange}
+        style={{ width: 240 }}
+        options={options}
+      />
     </div>
   );
 };

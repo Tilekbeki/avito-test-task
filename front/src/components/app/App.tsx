@@ -7,7 +7,7 @@ import AdsListPage from '../../pages/AdsListPage/AdsListPage';
 import AdEditPage from '../../pages/AdEditPage/AdEditPage';
 import AdViewPage from '../../pages/AdviewPage/AdViewPage';
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 function App() {
   const [count, setCount] = useState(0);
@@ -47,8 +47,6 @@ function App() {
             </Routes>
           </div>
         </Content>
-
-        <Footer className="app-footer">Footer Content</Footer>
       </Layout>
     </BrowserRouter>
   );

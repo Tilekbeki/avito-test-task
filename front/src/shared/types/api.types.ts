@@ -1,4 +1,4 @@
-import { ItemWithRevision } from "./ad";
+import type { ItemWithRevision } from "./ad.types";
 
 export type ItemsResponse = {
   items: ItemWithRevision[];
