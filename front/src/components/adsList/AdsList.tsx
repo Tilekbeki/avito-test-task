@@ -18,8 +18,8 @@ const AdsList = () => {
 
   return (
     <div className="flex gap-3 w-full flex-wrap">
-      {displayedItems.map((ad, i) => (
-        <AdCard key={i} ad={ad} />
+      {displayedItems.map((ad) => (
+        <AdCard key={ad.id} ad={ad} />
       ))}
     </div>
   );

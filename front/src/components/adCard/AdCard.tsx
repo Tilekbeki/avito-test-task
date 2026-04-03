@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import img from '../../assets/cover.png';
 import type { ItemWithRevision } from '../../shared/types/ad.types';
 
@@ -16,7 +17,9 @@ const AdCard = ({ ad }: Props) => {
     <div className="w-[200px] rounded-2xl bg-white overflow-hidden">
       {/* IMAGE */}
       <div className="relative">
-        <img className="w-full h-auto" src={img} alt={ad.title} />
+        <Link to={`/ads/${ad.id}`}>
+          <img className="w-full h-auto" src={img} alt={ad.title} />
+        </Link>
 
         {/* CATEGORY */}
         <div
@@ -29,7 +32,9 @@ const AdCard = ({ ad }: Props) => {
 
       {/* CONTENT */}
       <div className="pt-[22px] px-4 pb-4">
-        <h3 className="font-medium text-base mb-1 line-clamp-2">{ad.title}</h3>
+        <Link to={`/ads/${ad.id}`}>
+          <h3 className="font-medium text-base mb-1 line-clamp-2">{ad.title}</h3>
+        </Link>
 
         <p className="text-lg font-bold text-[#00000073] mb-1">{ad.price.toLocaleString()} ₽</p>
 
