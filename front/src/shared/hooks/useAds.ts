@@ -5,7 +5,7 @@ import { store } from '../../store/store';
 import {
   setItems,
   setError,
-  applyFilters,
+  
 } from '../../store/slices/ads.slice';
 import type { GetAdsParams } from '../types/ad.types';
 
@@ -20,7 +20,6 @@ export const useAds = (params: GetAdsParams) => {
 
     onSuccess: (data) => {
       dispatch(setItems(data));
-      dispatch(applyFilters());
       dispatch(setError(null));
     },
 
