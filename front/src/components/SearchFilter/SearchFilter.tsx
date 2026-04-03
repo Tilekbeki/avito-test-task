@@ -2,8 +2,10 @@ import { Input, Radio, Select, type SelectProps } from 'antd';
 import { AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { setSearchText, setSortBy, setViewMode } from '../../store/slices/searchFilter.slice';
-import { applyFiltersAndSort } from '../../store/slices/ads.slice';
+import { setViewMode } from '../../store/slices/searchFilter.slice';
+import { setParams } from '../../store/slices/ads.slice';
+import { useState, useEffect } from 'react';
+import { useDebounce } from '../../shared/hooks/useDebounce';
 
 const options: SelectProps['options'] = [
   {
@@ -20,47 +22,72 @@ const options: SelectProps['options'] = [
       { value: 'date_asc', label: 'По новизне (сначала старые)' },
     ],
   },
-  {
-    label: 'По цене',
-    options: [
-      { value: 'price_asc', label: 'По цене (сначала дешевле)' },
-      { value: 'price_desc', label: 'По цене (сначала дороже)' },
-    ],
-  },
 ];
+
+const getSortValue = (params: any) => {
+  if (params.sortColumn === 'title' && params.sortDirection === 'asc') return 'name_asc';
+  if (params.sortColumn === 'title' && params.sortDirection === 'desc') return 'name_desc';
+  if (params.sortColumn === 'createdAt' && params.sortDirection === 'asc') return 'date_asc';
+  if (params.sortColumn === 'createdAt' && params.sortDirection === 'desc') return 'date_desc';
+  return undefined;
+};
 
 const SearchFilter = () => {
   const dispatch = useDispatch();
-  const searchFilter = useSelector((state: RootState) => state.searchFilter);
-  const filterPanel = useSelector((state: RootState) => state.filterPanel);
+  const { viewMode } = useSelector((state: RootState) => state.searchFilter);
+  const { params } = useSelector((state: RootState) => state.ads);
 
-  const handleSearchChange = (value: string) => {
-    dispatch(setSearchText(value));
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 500);
+
+  useEffect(() => {
     dispatch(
-      applyFiltersAndSort({ filterPanel, searchFilter: { ...searchFilter, searchText: value } })
+      setParams({
+        q: debouncedSearch || undefined,
+        skip: 0,
+      })
     );
-  };
+  }, [debouncedSearch, dispatch]);
 
   const handleSortChange = (value: string) => {
-    dispatch(setSortBy(value));
+    const map: any = {
+      name_asc: { sortColumn: 'title', sortDirection: 'asc' },
+      name_desc: { sortColumn: 'title', sortDirection: 'desc' },
+      date_asc: { sortColumn: 'createdAt', sortDirection: 'asc' },
+      date_desc: { sortColumn: 'createdAt', sortDirection: 'desc' },
+    };
+
     dispatch(
-      applyFiltersAndSort({ filterPanel, searchFilter: { ...searchFilter, sortBy: value } })
+      setParams({
+        ...map[value],
+        skip: 0,
+      })
     );
   };
 
   const handleViewChange = (e: any) => {
-    dispatch(setViewMode(e.target.value));
+    const viewMode = e.target.value;
+
+    dispatch(setViewMode(viewMode));
+
+    dispatch(
+      setParams({
+        limit: viewMode === 'list' ? 4 : 10,
+        skip: 0,
+      })
+    );
   };
 
   return (
     <div className="p-[12px] bg-white rounded-lg flex gap-[24px] items-center">
       <Input.Search
         placeholder="Найти объявление..."
-        value={searchFilter.searchText}
-        onChange={(e) => handleSearchChange(e.target.value)}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         className="flex-1"
       />
-      <Radio.Group onChange={handleViewChange} value={searchFilter.viewMode}>
+
+      <Radio.Group onChange={handleViewChange} value={viewMode}>
         <Radio.Button value="grid">
           <AppstoreOutlined />
         </Radio.Button>
@@ -68,8 +95,9 @@ const SearchFilter = () => {
           <UnorderedListOutlined />
         </Radio.Button>
       </Radio.Group>
+
       <Select
-        value={searchFilter.sortBy}
+        value={getSortValue(params)} // 🔥 синхронизация
         onChange={handleSortChange}
         style={{ width: 240 }}
         options={options}

@@ -1,24 +1,30 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchAds } from '../../store/thunks/fetchAds';
+import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import AdCard from '../adCard';
 import { Spin, Alert } from 'antd';
+import { useAds } from '../../shared/hooks/useAds';
 
 const AdsList = () => {
-  const dispatch = useDispatch();
-  const { displayedItems, loading, error, params } = useSelector((state: RootState) => state.ads);
+  const { params } = useSelector((state: RootState) => state.ads);
+  const { data, isLoading, isError } = useAds(params);
 
-  useEffect(() => {
-    dispatch(fetchAds(params));
-  }, [dispatch, params]);
+  // 🔄 loading
+  if (isLoading) return <Spin />;
 
-  if (loading) return <Spin />;
-  if (error) return <Alert type="error" message={error} />;
+  // ❌ error
+  if (isError || !data) {
+    return <Alert message="Ошибка загрузки" type="error" />;
+  }
 
+  // 📭 empty
+  if (data.items.length === 0) {
+    return <div className="text-center w-full py-10">Ничего не найдено</div>;
+  }
+
+  // ✅ success
   return (
     <div className="flex gap-3 w-full flex-wrap">
-      {displayedItems.map((ad) => (
+      {data.items.map((ad) => (
         <AdCard key={ad.id} ad={ad} />
       ))}
     </div>

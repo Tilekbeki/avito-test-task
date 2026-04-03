@@ -6,11 +6,11 @@ import { useAds } from '../../shared/hooks/useAds';
 
 const PaginationPanel = () => {
   const dispatch = useDispatch();
+  const { params } = useSelector((state: RootState) => state.ads);
+  const { data } = useAds(params);
 
-  const { total, params } = useSelector((state: RootState) => state.ads);
-
-  // 👉 при изменении params автоматически будет новый запрос
-  useAds(params);
+  // Если данных нет или всего меньше лимита — пагинацию не показываем
+  if (!data || data.total <= (params.limit ?? 10)) return null;
 
   const currentPage = Math.floor((params.skip ?? 0) / (params.limit ?? 10)) + 1;
 
@@ -23,7 +23,13 @@ const PaginationPanel = () => {
   };
 
   return (
-    <Pagination current={currentPage} onChange={onChange} total={total} pageSize={params.limit} />
+    <Pagination
+      current={currentPage}
+      total={data.total}
+      pageSize={params.limit}
+      onChange={onChange}
+      showSizeChanger={false} // убираем возможность менять размер страницы
+    />
   );
 };
 

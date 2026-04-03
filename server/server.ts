@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import cors from '@fastify/cors'; // 👈 Установите этот плагин
 
 import items from 'data/items.json' with { type: 'json' };
 import { Item } from 'src/types.ts';
@@ -12,18 +13,21 @@ const fastify = Fastify({
   logger: true,
 });
 
+// ✅ ИСПОЛЬЗУЕМ ОФИЦИАЛЬНЫЙ CORS ПЛАГИН
+await fastify.register(cors, {
+  origin: '*', // или ['http://localhost:5173'] для безопасности
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+});
+
+// Больше не нужен middie для CORS, но оставим для задержки
 await fastify.register((await import('@fastify/middie')).default);
 
-// Искуственная задержка ответов, чтобы можно было протестировать состояния загрузки
+// Искуственная задержка ответов
 fastify.use((_, __, next) =>
   new Promise(res => setTimeout(res, 300 + Math.random() * 700)).then(next),
 );
-
-// Настройка CORS
-fastify.use((_, reply, next) => {
-  reply.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-});
 
 interface ItemGetRequest extends Fastify.RequestGenericInterface {
   Params: {
@@ -78,12 +82,12 @@ fastify.get<ItemsGetRequest>('/items', request => {
   } = ItemsGetInQuerySchema.parse(request.query);
 
   const filteredItems = ITEMS.filter(item => {
-    return (
-      item.title.toLowerCase().includes(q.toLowerCase()) &&
-      (!needsRevision || doesItemNeedRevision(item)) &&
-      (!categories?.length ||
-        categories.some(category => item.category === category))
-    );
+    const searchMatch = !q || item.title.toLowerCase().includes(q.toLowerCase());
+    const revisionMatch = !needsRevision || doesItemNeedRevision(item);
+    const categoryMatch = !categories?.length ||
+      categories.some(category => item.category === category);
+    
+    return searchMatch && revisionMatch && categoryMatch;
   });
 
   return {

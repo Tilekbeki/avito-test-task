@@ -32,8 +32,15 @@ export const adsService = {
     return res.data;
   },
 
-  async getAdById(id: string, signal?: AbortSignal): Promise<ItemWithRevision> {
-    const res = await apiClient.get<ItemWithRevision>(`/items/${id}`, { signal });
+  async getAdById(id: string | number, signal?: AbortSignal): Promise<ItemWithRevision> {
+    // Приводим id к числу, если backend ожидает число
+    const numericId = Number(id);
+    if (isNaN(numericId)) throw new Error('Неверный ID объявления');
+
+    const res = await apiClient.get<ItemWithRevision>(`/items/${numericId}`, { signal });
+    
+    // 🔥 Если сервер оборачивает объект в data
+    // return res.data.data ?? res.data;
     return res.data;
   },
 
