@@ -28,7 +28,11 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
   if (viewMode === 'list') {
     return (
       <Link to={`/ads/${ad.id}`} className="block">
-        <Card hoverable className="font-robot w-full overflow-hidden" bodyStyle={{ padding: 0 }}>
+        <Card
+          hoverable
+          className="font-family-roboto w-full overflow-hidden"
+          bodyStyle={{ padding: 0 }}
+        >
           <div className="flex gap-4 h-[132px]">
             {/* IMAGE */}
             <div className="shrink-0 w-[179px]">
@@ -37,11 +41,15 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
 
             {/* CONTENT */}
             <div className="flex-1 py-4 pr-4">
-              <div className="text-[16px] text-[#848388] mb-1">{categoryLabels[ad.category]}</div>
-              <h3 className="font-medium text-[16px] mb-1 hover:text-blue-600 transition-colors line-clamp-1">
+              <div className="text-[16px] text-[#848388] font-family-inter mb-1">
+                {categoryLabels[ad.category]}
+              </div>
+              <h3 className="font-family-roboto text-[16px] mb-1 hover:text-blue-600 transition-colors line-clamp-1">
                 {ad.title}
               </h3>
-              <p className="text-[16px] font-bold text-black mb-1">{ad.price} ₽</p>
+              <p className="text-[16px] font-family-inter font-semibold text-black/45 mb-1">
+                {ad.price} ₽
+              </p>
               {ad.needsRevision && <RevisionTag />}
             </div>
           </div>
@@ -62,7 +70,7 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
             <div
               className="absolute bottom-[-11px] left-[12px]
              bg-white rounded-full px-3 py-1 shadow-sm
-             font-roboto font-normal text-[14px]"
+             font-family-roboto font-normal text-[14px]"
             >
               {categoryLabels[ad.category]}
             </div>
@@ -71,7 +79,7 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
       >
         <div>
           <h3
-            className="mb-1 hover:text-blue-600 transition-colors font-roboto font-normal text-[16px]"
+            className="mb-1 hover:text-blue-600 transition-colors font-family-roboto font-normal text-[16px]"
             title={ad.title}
             style={{
               maxWidth: '168px',
@@ -82,7 +90,9 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
           >
             {ad.title}
           </h3>
-          <p className="font-inter text-black/45 text-[16px] font-semibold mb-2">{ad.price} ₽</p>
+          <p className="font-family-inter text-black/45 text-[16px] font-semibold mb-2">
+            {ad.price} ₽
+          </p>
           {ad.needsRevision && <RevisionTag />}
         </div>
       </Card>

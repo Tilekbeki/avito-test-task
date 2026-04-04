@@ -1,27 +1,15 @@
-import { Alert, Button, Spin, Tag } from 'antd';
-import { EditOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+// pages/AdViewPage.tsx
+import { Alert, Button, Spin } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+import { useParams, Link } from 'react-router-dom';
 import img from '../../assets/cover-big.png';
-import { adsService } from '../../services/ads.service';
-import type { ItemWithRevision } from '../../shared/types/ad.types';
-import axios from 'axios';
-
-// Мета-лейблы для параметров
-const paramLabels: Record<string, string> = {
-  brand: 'Бренд',
-  model: 'Модель',
-  yearOfManufacture: 'Год выпуска',
-  transmission: 'Коробка передач',
-  mileage: 'Пробег (км)',
-  enginePower: 'Мощность двигателя (л.с.)',
-  type: 'Тип',
-  condition: 'Состояние',
-  color: 'Цвет',
-  address: 'Адрес',
-  area: 'Площадь (м²)',
-  floor: 'Этаж',
-};
+import { useAd } from '../../shared/hooks/useAd';
+import {
+  PARAM_LABELS,
+  formatValue,
+  getMissingFields,
+  needsAttention,
+} from '../../shared/types/ad.types';
 
 const formatDate = (date?: string) => {
   if (!date) return '—';
@@ -35,129 +23,137 @@ const formatDate = (date?: string) => {
 
 const AdViewPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [ad, setAd] = useState<ItemWithRevision | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: ad, isLoading, isError } = useAd(id);
 
-  // Загрузка объявления
-  useEffect(() => {
-    if (!id) return;
-    const controller = new AbortController();
-
-    const fetchAd = async () => {
-      try {
-        setLoading(true);
-        const data = await adsService.getAdById(id, controller.signal);
-        setAd(data);
-      } catch (e: any) {
-        if (axios.isCancel(e) || e.message === 'canceled') return;
-        setError(e.message || 'Ошибка при загрузке объявления');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAd();
-    return () => controller.abort();
-  }, [id]);
-
-  if (loading)
-    return <Spin tip="Загрузка..." className="min-h-screen flex justify-center items-center" />;
-  if (error) return <Alert type="error" message={error} className="m-6" />;
-  if (!ad) return <Alert type="info" message="Объявление не найдено" className="m-6" />;
-
-  // Недостающие поля
-  const missingFields = Object.entries(ad.params || {})
-    .filter(([_, value]) => value === undefined || value === '')
-    .map(([key]) => paramLabels[key] || key);
-
-  // Если нет описания, добавляем его в список недостающих полей
-  if (!ad.description?.trim()) {
-    missingFields.push('Описание');
+  // 🔄 Loading
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-screen">
+        <Spin size="large" tip="Загрузка объявления..." />
+      </div>
+    );
   }
 
-  return (
-    <div className="bg-white min-h-screen p-6">
-      {/* Кнопка назад */}
-      <div className="mb-4">
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/ads')}>
-          Назад к списку
-        </Button>
-      </div>
+  // ❌ Error
+  if (isError) {
+    return (
+      <Alert
+        message="Ошибка загрузки"
+        description="Не удалось загрузить объявление. Попробуйте позже."
+        type="error"
+        showIcon
+        className="m-6"
+      />
+    );
+  }
 
+  // 📭 Empty
+  if (!ad) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-screen">
+        <Alert message="Объявление не найдено" type="info" showIcon />
+      </div>
+    );
+  }
+
+  const missingFields = getMissingFields(ad);
+  const showAttention = needsAttention(ad);
+
+  return (
+    <div className="container mx-auto px-4 lg:px-6">
       {/* HEADER */}
-      <div className="flex justify-between items-start mb-3">
-        <h1 className="text-[32px] font-medium">{ad.title}</h1>
-        <div className="text-[24px] font-semibold text-red-500">{ad.price.toLocaleString()} ₽</div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
+        <h1 className="font-family-roboto text-[28px] sm:text-[32px] font-medium">{ad.title}</h1>
+        <div className="text-[28px] sm:text-[30px] font-family-roboto font-medium text-black/85">
+          {ad.price} ₽
+        </div>
       </div>
 
       {/* ACTIONS & DATES */}
-      <div className="flex justify-between mb-8 items-center">
-        {/* ✅ Кнопка-ссылка на редактирование */}
+      <div className="flex flex-col sm:flex-row justify-between mb-8 items-start sm:items-center gap-4">
         <Link to={`/ads/${id}/edit`}>
-          <Button type="primary" icon={<EditOutlined />}>
+          <Button
+            type="primary"
+            icon={<EditOutlined className="!text-[18px] !w-[18px] !h-[18px]" />}
+            iconPlacement="end"
+            className="!py-2 !h-[38px] font-family-inter !text-[16px] !rounded-[8px]"
+          >
             Редактировать
           </Button>
         </Link>
-        <div className="text-[#848388] flex flex-col text-right text-[16px]">
+        <div className="text-[#848388] flex flex-col text-left sm:text-right text-[16px] font-family-inter">
           <div>Опубликовано: {formatDate(ad.createdAt)}</div>
           <div>Обновлено: {formatDate(ad.updatedAt)}</div>
         </div>
       </div>
 
-      <hr className="mb-8" />
+      <hr className="mb-8 border-[#F0F0F0]" />
 
-      {/* MAIN CONTENT */}
-      <div className="flex gap-8 mb-8">
-        <div className="w-[480px] h-[360px] flex-shrink-0">
-          <img src={img} alt="товар" className="w-full h-full object-cover rounded" />
+      {/* MAIN CONTENT - Адаптивная версия */}
+      <div className="flex flex-col lg:flex-row gap-8 mb-8">
+        {/* Изображение - на маленьких экранах w-full */}
+        <div className="w-full lg:w-[480px] lg:h-[360px] flex-shrink-0">
+          <img src={img} alt="товар" className="w-full h-auto lg:h-full object-cover rounded" />
         </div>
 
+        {/* Контент справа - на маленьких экранах тоже w-full */}
         <div className="flex flex-col gap-6 w-full">
-          {/* Блок "Требуются доработки" */}
-          {(ad.needsRevision || missingFields.length > 0) && (
+          {/* Блок "Требуются доработки" - адаптивная ширина */}
+          {showAttention && (
             <Alert
-              message="Требуются доработки"
+              title="Требуются доработки"
               description={
-                missingFields.length > 0
-                  ? `Не заполнены поля: ${missingFields.join(', ')}`
-                  : 'Описание отсутствует'
+                <div>
+                  <p>У объявления не заполнены поля:</p>
+                  <ul className="list-disc pl-6 [&_li::marker]:!text-[10px]">
+                    {missingFields.map((field) => (
+                      <li key={field}>{field}</li>
+                    ))}
+                  </ul>
+                </div>
               }
               type="warning"
               showIcon
+              className="w-full lg:!max-w-[512px] animate-pulse [&_.ant-alert-icon]:!text-[18px] [&_.ant-alert-icon]:!w-[18px] [&_.ant-alert-icon]:!h-[18px] [&_.ant-alert-title]:!font-roboto [&_.ant-alert-title]:!font-semibold [&_.ant-alert-title]:!text-base [&_.ant-alert-description]:!font-roboto [&_.ant-alert-description]:!font-normal"
             />
           )}
 
           {/* Характеристики */}
           <div>
-            <div className="font-medium mb-2 text-lg">Характеристики</div>
+            <div className="mb-2 text-[22px] font-family-roboto font-medium">Характеристики</div>
             {ad.params && Object.keys(ad.params).length > 0 ? (
-              <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-                {Object.entries(ad.params).map(([key, value]) => (
-                  <div key={key} className="flex gap-3">
-                    <div className="w-[180px] text-gray-500">{paramLabels[key] || key}</div>
-                    <div className="font-medium">
-                      {value !== undefined && value !== '' ? String(value) : '—'}
+              <div className="grid grid-cols-1 sm:grid-cols-1 gap-x-8 gap-y-2">
+                {Object.entries(ad.params).map(([key, value]) => {
+                  const label = PARAM_LABELS[key] || key;
+                  const displayValue = formatValue(key, value);
+
+                  return (
+                    <div key={key} className="flex gap-3">
+                      <div className="w-[180px] font-semibold text-black/45 font-family-inter text-[16px]">
+                        {label}
+                      </div>
+                      <div className="text-[#1E1E1E] font-family-inter text-[16px]">
+                        {displayValue || <span className="text-red-400">Не заполнено</span>}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
-              <div className="text-gray-400">Нет характеристик</div>
+              <div className="text-[#6e6e6e] font-family-roboto leading-[140%] text-[16px]">
+                Нет характеристик. Добавьте их, чтобы повысить отклик.
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* DESCRIPTION */}
-      <div className="w-full max-w-[600px]">
-        <div className="font-medium mb-2 text-lg">Описание</div>
-        <div className="text-gray-700 leading-relaxed">
-          {ad.description?.trim() ? (
-            ad.description
-          ) : (
-            <span className="text-gray-400">
+      {/* DESCRIPTION - адаптивная ширина */}
+      <div className="w-full lg:max-w-[480px]">
+        <div className="mb-2 text-[22px] font-family-roboto font-medium">Описание</div>
+        <div className="text-[#1E1E1E] font-family-roboto leading-[140%] text-[16px] leading-relaxed">
+          {ad.description?.trim() || (
+            <span className="text-[#6e6e6e] font-family-roboto leading-[140%] text-[16px]">
               Описание отсутствует. Добавьте описание, чтобы повысить отклик.
             </span>
           )}

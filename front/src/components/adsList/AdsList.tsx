@@ -39,7 +39,7 @@ const AdsList = ({ className }: { className?: string }) => {
   // ✅ Успешный рендер с разными отступами
   const containerClassName = `w-full flex-wrap ${
     viewMode === 'grid'
-      ? 'flex gap-x-2 gap-y-3 justify-between max-[1376px]:justify-normal' // grid: горизонтальный gap 2 (8px), вертикальный gap 3 (12px)
+      ? 'flex gap-x-2 gap-y-3' // grid: горизонтальный gap 2 (8px), вертикальный gap 3 (12px)
       : 'flex flex-col gap-3' // list: gap 3 (12px) между карточками
   } ${className || ''}`;
 

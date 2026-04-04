@@ -43,13 +43,13 @@ const FiltersPanel = () => {
   return (
     <div className="!w-[256px]" style={{ width: '256px' }}>
       <div className="bg-white rounded-[8px] mb-2.5 p-4">
-        <div className="font-robot text-[16px] font-medium mb-2.5">Фильтры</div>
+        <div className="font-family-roboto text-[16px] font-medium mb-2.5">Фильтры</div>
 
         <div
           className="flex justify-between items-center cursor-pointer mb-3"
           onClick={() => setShowCategories(!showCategories)}
         >
-          <div className="font-normal font-roboto text-[14px]">Категория</div>
+          <div className="font-normal font-family-roboto text-[14px]">Категория</div>
           <UpOutlined
             className={`transition-transform duration-200 ${!showCategories ? 'rotate-180' : ''}`}
           />
@@ -65,13 +65,15 @@ const FiltersPanel = () => {
         )}
         <hr className="my-2.5 border-[#F0F0F0]" />
         <div className="flex justify-between items-center mt-4">
-          <span className="font-inter font-semibold text-[14px]">Только требующие доработок</span>
+          <span className="font-family-inter font-semibold text-[14px]">
+            Только требующие доработок
+          </span>
           <Switch checked={params.needsRevision ?? false} onChange={handleOnlyNeedFixChange} />
         </div>
       </div>
 
       <div
-        className="bg-white rounded-[8px] text-[14px] font-inter text-center h-[41px] leading-[41px] text-[#848388] cursor-pointer hover:bg-gray-50 transition-colors"
+        className="bg-white rounded-[8px] text-[14px] font-family-inter text-center h-[41px] leading-[41px] text-[#848388] cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={handleResetFilters}
       >
         Сбросить фильтры

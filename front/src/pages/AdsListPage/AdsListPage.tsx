@@ -14,9 +14,11 @@ const AdsListPage = () => {
         <div className="min-w-[256px]">
           <FiltersPanel />
         </div>
-        <div className="w-full">
-          <AdsList className="mb-2.5" />
-          <PaginationPanel />
+        <div className="w-full flex justify-end">
+          <div className="w-full max-w-[1035px]">
+            <AdsList className="mb-2.5" />
+            <PaginationPanel />
+          </div>
         </div>
       </div>
     </div>

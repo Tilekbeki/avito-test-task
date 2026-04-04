@@ -33,8 +33,16 @@ const adsSlice = createSlice({
       state.params = { ...state.params, ...action.payload };
     },
     resetParams(state) {
-      state.params = { limit: 10, skip: 0 };
-    },
+  state.params = { 
+    limit: 10, 
+    skip: 0,
+    sortColumn: 'createdAt',  
+    sortDirection: 'desc',    
+    q: undefined,            
+    categories: undefined,    
+    needsRevision: undefined, 
+  };
+},
   },
 });
 
