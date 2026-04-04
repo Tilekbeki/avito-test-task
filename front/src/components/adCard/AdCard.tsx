@@ -1,52 +1,92 @@
 import { Link } from 'react-router-dom';
+import { Card, Tag } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
 import img from '../../assets/cover.png';
 import type { ItemWithRevision } from '../../shared/types/ad.types';
 
+const { Meta } = Card;
+
 interface Props {
   ad: ItemWithRevision;
+  viewMode?: 'grid' | 'list';
 }
 
-const categoryLabels = {
+const categoryLabels: Record<string, string> = {
   electronics: 'Электроника',
   auto: 'Транспорт',
   real_estate: 'Недвижимость',
 };
 
-const AdCard = ({ ad }: Props) => {
-  return (
-    <div className="w-[200px] rounded-2xl bg-white overflow-hidden">
-      {/* IMAGE */}
-      <div className="relative">
-        <Link to={`/ads/${ad.id}`}>
-          <img className="w-full h-auto" src={img} alt={ad.title} />
-        </Link>
+const RevisionTag = () => (
+  <Tag icon={<ClockCircleOutlined />} color="warning" className="flex items-center gap-1 w-fit">
+    Требует доработок
+  </Tag>
+);
 
-        {/* CATEGORY */}
-        <div
-          className="absolute bottom-[-11px] left-[12px]
-                     bg-white rounded-full px-3 py-1 text-sm font-medium"
-        >
-          {categoryLabels[ad.category]}
-        </div>
-      </div>
+const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
+  // Режим списка (горизонтальный)
+  if (viewMode === 'list') {
+    return (
+      <Link to={`/ads/${ad.id}`} className="block">
+        <Card hoverable className="font-robot w-full overflow-hidden" bodyStyle={{ padding: 0 }}>
+          <div className="flex gap-4 h-[132px]">
+            {/* IMAGE */}
+            <div className="shrink-0 w-[179px]">
+              <img className="w-full h-full object-cover" src={img} alt={ad.title} />
+            </div>
 
-      {/* CONTENT */}
-      <div className="pt-[22px] px-4 pb-4">
-        <Link to={`/ads/${ad.id}`}>
-          <h3 className="font-medium text-base mb-1 line-clamp-2">{ad.title}</h3>
-        </Link>
-
-        <p className="text-lg font-bold text-[#00000073] mb-1">{ad.price.toLocaleString()} ₽</p>
-
-        {/* NEEDS REVISION */}
-        {ad.needsRevision && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#FAAD14] rounded-full animate-pulse"></div>
-            <span className="text-[#FAAD14] text-sm">Требует доработок</span>
+            {/* CONTENT */}
+            <div className="flex-1 py-4 pr-4">
+              <div className="text-[16px] text-[#848388] mb-1">{categoryLabels[ad.category]}</div>
+              <h3 className="font-medium text-[16px] mb-1 hover:text-blue-600 transition-colors line-clamp-1">
+                {ad.title}
+              </h3>
+              <p className="text-[16px] font-bold text-black mb-1">{ad.price} ₽</p>
+              {ad.needsRevision && <RevisionTag />}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
+        </Card>
+      </Link>
+    );
+  }
+
+  // Режим сетки (вертикальный)
+  return (
+    <Link to={`/ads/${ad.id}`} className="block w-[200px]">
+      <Card
+        hoverable
+        className="h-[268px] overflow-hidden"
+        cover={
+          <div className="relative">
+            <img alt={ad.title} src={img} className="w-full h-auto" />
+            <div
+              className="absolute bottom-[-11px] left-[12px]
+             bg-white rounded-full px-3 py-1 shadow-sm
+             font-roboto font-normal text-[14px]"
+            >
+              {categoryLabels[ad.category]}
+            </div>
+          </div>
+        }
+      >
+        <div>
+          <h3
+            className="mb-1 hover:text-blue-600 transition-colors font-roboto font-normal text-[16px]"
+            title={ad.title}
+            style={{
+              maxWidth: '168px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {ad.title}
+          </h3>
+          <p className="font-inter text-black/45 text-[16px] font-semibold mb-2">{ad.price} ₽</p>
+          {ad.needsRevision && <RevisionTag />}
+        </div>
+      </Card>
+    </Link>
   );
 };
 

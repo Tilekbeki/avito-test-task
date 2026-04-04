@@ -1,11 +1,12 @@
 import { Input, Radio, Select, type SelectProps } from 'antd';
-import { AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { setViewMode } from '../../store/slices/searchFilter.slice';
 import { setParams } from '../../store/slices/ads.slice';
 import { useState, useEffect } from 'react';
 import { useDebounce } from '../../shared/hooks/useDebounce';
+import styles from './SearchFilter.module.scss';
 
 const options: SelectProps['options'] = [
   {
@@ -32,7 +33,7 @@ const getSortValue = (params: any) => {
   return undefined;
 };
 
-const SearchFilter = () => {
+const SearchFilter = ({ className }: { className?: string }) => {
   const dispatch = useDispatch();
   const { viewMode } = useSelector((state: RootState) => state.searchFilter);
   const { params } = useSelector((state: RootState) => state.ads);
@@ -79,15 +80,26 @@ const SearchFilter = () => {
   };
 
   return (
-    <div className="p-[12px] bg-white rounded-lg flex gap-[24px] items-center">
-      <Input.Search
+    <div className={`p-[12px] bg-white rounded-lg flex gap-[24px] items-center ${className}`}>
+      <Input
         placeholder="Найти объявление..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="flex-1"
+        suffix={<SearchOutlined />}
+        styles={{
+          affixWrapper: {
+            backgroundColor: '#F6F6F8',
+            border: 'none',
+            height: '32px',
+            padding: '5px 12px',
+          },
+          input: {
+            backgroundColor: 'transparent',
+          },
+        }}
       />
 
-      <Radio.Group onChange={handleViewChange} value={viewMode}>
+      <Radio.Group onChange={handleViewChange} value={viewMode} className={styles.radioGroup}>
         <Radio.Button value="grid">
           <AppstoreOutlined />
         </Radio.Button>
@@ -97,10 +109,20 @@ const SearchFilter = () => {
       </Radio.Group>
 
       <Select
-        value={getSortValue(params)} // 🔥 синхронизация
+        value={getSortValue(params)}
         onChange={handleSortChange}
-        style={{ width: 240 }}
+        style={{
+          width: 240,
+          height: 32,
+          color: '#000',
+          padding: '0 11px',
+          border: '4px solid #F4F4F6',
+          borderRadius: 8,
+          background: 'white',
+          boxSizing: 'border-box',
+        }}
         options={options}
+        popupClassName="custom-select-dropdown"
       />
     </div>
   );

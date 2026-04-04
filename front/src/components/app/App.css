@@ -15,16 +15,10 @@
 }
 
 .container {
-  max-width: 1335px; /* Или любую другую максимальную ширину */
+  max-width: 1399px; /* Или любую другую максимальную ширину */
   margin: 0 auto;
   padding: 32px;
   width: 100%;
-}
-
-.app-footer {
-  text-align: center;
-  background: #fff;
-  padding: 24px 50px;
 }
 
 /* Если вы хотите, чтобы header тоже был центрирован */

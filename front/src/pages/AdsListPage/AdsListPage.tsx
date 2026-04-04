@@ -8,13 +8,14 @@ const AdsListPage = () => {
   return (
     <div>
       <Header className="mb-7" />
-      <SearchFilter className="mb-6" />
+      <SearchFilter className="mb-4" />
 
       <div className="flex gap-6">
-        <FiltersPanel />
-        <div>
+        <div className="min-w-[256px]">
+          <FiltersPanel />
+        </div>
+        <div className="w-full">
           <AdsList className="mb-2.5" />
-
           <PaginationPanel />
         </div>
       </div>

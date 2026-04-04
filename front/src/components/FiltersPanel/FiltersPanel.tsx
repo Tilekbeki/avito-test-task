@@ -5,7 +5,7 @@ import type { RootState } from '../../store/store';
 import { setCategories, setOnlyNeedFix, resetFilters } from '../../store/slices/filterPanel.slice';
 import { resetParams, setParams } from '../../store/slices/ads.slice';
 import { useState } from 'react';
-
+import styles from './FiltersPanel.module.scss';
 const FiltersPanel = () => {
   const dispatch = useDispatch();
   const { params } = useSelector((state: RootState) => state.ads);
@@ -41,15 +41,15 @@ const FiltersPanel = () => {
   };
 
   return (
-    <div className="w-[256px]">
-      <div className="bg-white rounded-2xl mb-2.5 p-4">
-        <div className="font-bold text-lg mb-4">Фильтры</div>
+    <div className="!w-[256px]" style={{ width: '256px' }}>
+      <div className="bg-white rounded-[8px] mb-2.5 p-4">
+        <div className="font-robot text-[16px] font-medium mb-2.5">Фильтры</div>
 
         <div
           className="flex justify-between items-center cursor-pointer mb-3"
           onClick={() => setShowCategories(!showCategories)}
         >
-          <div className="font-medium">Категория</div>
+          <div className="font-normal font-roboto text-[14px]">Категория</div>
           <UpOutlined
             className={`transition-transform duration-200 ${!showCategories ? 'rotate-180' : ''}`}
           />
@@ -60,18 +60,18 @@ const FiltersPanel = () => {
             options={categories}
             value={params.categories || []}
             onChange={handleCategoryChange}
-            className="flex flex-col gap-2 mb-4"
+            className={`flex flex-col gap-2 ${styles.checkboxGroup}`}
           />
         )}
-
+        <hr className="my-2.5 border-[#F0F0F0]" />
         <div className="flex justify-between items-center mt-4">
-          <span className="font-bold">Только требующие доработок</span>
+          <span className="font-inter font-semibold text-[14px]">Только требующие доработок</span>
           <Switch checked={params.needsRevision ?? false} onChange={handleOnlyNeedFixChange} />
         </div>
       </div>
 
       <div
-        className="bg-white rounded-2xl text-center h-[41px] py-3 text-[#848388] cursor-pointer hover:bg-gray-50 transition-colors"
+        className="bg-white rounded-[8px] text-[14px] font-inter text-center h-[41px] leading-[41px] text-[#848388] cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={handleResetFilters}
       >
         Сбросить фильтры

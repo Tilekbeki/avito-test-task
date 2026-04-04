@@ -1,31 +1,52 @@
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import AdCard from '../adCard';
-import { Spin, Alert } from 'antd';
+import { Spin, Alert, Empty } from 'antd';
 import { useAds } from '../../shared/hooks/useAds';
 
-const AdsList = () => {
+const AdsList = ({ className }: { className?: string }) => {
   const { params } = useSelector((state: RootState) => state.ads);
+  const { viewMode } = useSelector((state: RootState) => state.searchFilter);
   const { data, isLoading, isError } = useAds(params);
 
-  // 🔄 loading
-  if (isLoading) return <Spin />;
+  // 🔄 Состояние загрузки
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full py-10">
+        <Spin size="large" tip="Загрузка объявлений..." />
+      </div>
+    );
+  }
 
-  // ❌ error
+  // ❌ Состояние ошибки
   if (isError || !data) {
-    return <Alert message="Ошибка загрузки" type="error" />;
+    return (
+      <Alert
+        message="Ошибка загрузки"
+        description="Не удалось загрузить объявления. Попробуйте позже."
+        type="error"
+        showIcon
+        className="w-full"
+      />
+    );
   }
 
-  // 📭 empty
+  // 📭 Состояние пустого списка
   if (data.items.length === 0) {
-    return <div className="text-center w-full py-10">Ничего не найдено</div>;
+    return <Empty description="Ничего не найдено" className="w-full py-10" />;
   }
 
-  // ✅ success
+  // ✅ Успешный рендер с разными отступами
+  const containerClassName = `w-full flex-wrap ${
+    viewMode === 'grid'
+      ? 'flex gap-x-2 gap-y-3 justify-between max-[1376px]:justify-normal' // grid: горизонтальный gap 2 (8px), вертикальный gap 3 (12px)
+      : 'flex flex-col gap-3' // list: gap 3 (12px) между карточками
+  } ${className || ''}`;
+
   return (
-    <div className="flex gap-3 w-full flex-wrap">
+    <div className={containerClassName}>
       {data.items.map((ad) => (
-        <AdCard key={ad.id} ad={ad} />
+        <AdCard key={ad.id} ad={ad} viewMode={viewMode} />
       ))}
     </div>
   );
