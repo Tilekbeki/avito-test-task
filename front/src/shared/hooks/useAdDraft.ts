@@ -35,10 +35,10 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
 
         if (!isMountedRef.current) return;
 
-        const mergedParams = { ...defaultParams[data.category], ...data.params };
+        const mergedParams = { ...defaultParams[data.category], ...data.params } as any;
         
-        if (data.params?.type) {
-          mergedParams.type = data.params.type;
+        if ((data.params as any)?.type) {
+          mergedParams.type = (data.params as any).type;
         }
 
         const serverData: ItemUpdateIn = {
@@ -111,7 +111,7 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
     }
   }, [formData, id]);
 
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   
   useEffect(() => {
     if (saveTimeoutRef.current) {

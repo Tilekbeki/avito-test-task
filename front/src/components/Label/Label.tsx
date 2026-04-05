@@ -1,5 +1,5 @@
 export const Label = ({ text, required }: { text: string; required?: boolean }) => (
-  <label className="block font-family-inter mb-2 font-semibold text-[16px]">
+  <label className="block font-family-inter mb-2 font-medium text-[16px]">
     {required && <span className="text-red-500 mr-1">*</span>}
     {text}
   </label>

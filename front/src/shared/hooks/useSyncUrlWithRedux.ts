@@ -17,7 +17,7 @@ export const useSyncUrlWithRedux = () => {
     if (q) urlParams.q = q;
     
     const categories = searchParams.get('categories');
-    if (categories) urlParams.categories = categories.split(',');
+    if (categories) urlParams.categories = categories.split(',') as any;
     
     const needsRevision = searchParams.get('needsRevision');
     if (needsRevision !== null) urlParams.needsRevision = needsRevision === 'true';

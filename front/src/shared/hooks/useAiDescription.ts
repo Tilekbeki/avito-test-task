@@ -6,7 +6,7 @@ export const useAiDescription = () => {
   const [failed, setFailed] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
 
-  const generate = async (title, params, description) => {
+  const generate = async (title: string, params: Record<string, any>, description?: string) => {
     setLoading(true);
     setFailed(false);
 

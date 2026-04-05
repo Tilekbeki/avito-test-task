@@ -6,6 +6,5 @@ export const useAds = (params: GetAdsParams) => {
   return useQuery({
     queryKey: ['ads', params],
     queryFn: ({ signal }) => adsService.getAds(params, signal),
-    keepPreviousData: true, // 🔥 чтобы не мигало при пагинации
   });
 };

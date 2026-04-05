@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { aiService } from "../../services/ai.service";
+import { aiService, type AiPriceResponse } from "../../services/ai.service";
 
 export const useAiPrice = () => {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<AiPriceResponse | null>(null);
 
-  const getPrice = async (title, params) => {
+  const getPrice = async (title: string, params: Record<string, any>) => {
     setLoading(true);
     setFailed(false);
 

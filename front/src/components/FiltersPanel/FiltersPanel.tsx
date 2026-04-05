@@ -21,7 +21,7 @@ const FiltersPanel = () => {
   const handleCategoryChange = (checkedValues: string[]) => {
     dispatch(
       setParams({
-        categories: checkedValues.length > 0 ? checkedValues : undefined,
+        categories: checkedValues.length > 0 ? (checkedValues as any) : undefined,
         skip: 0,
       })
     );
@@ -58,7 +58,7 @@ const FiltersPanel = () => {
         {showCategories && (
           <Checkbox.Group
             options={categories}
-            value={params.categories || []}
+            value={(params.categories as string[]) || []}
             onChange={handleCategoryChange}
             className={`flex flex-col gap-2 ${styles.checkboxGroup}`}
           />

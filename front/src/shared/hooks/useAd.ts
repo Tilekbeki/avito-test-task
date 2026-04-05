@@ -1,6 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { adsService } from '../../services/ads.service';
-import type { ItemWithRevision } from '../types/ad.types';
 
 export const useAd = (id?: string) => {
   const queryClient = useQueryClient();

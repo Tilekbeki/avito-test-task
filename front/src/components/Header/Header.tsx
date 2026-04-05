@@ -1,5 +1,9 @@
 import { useTotalCount } from '../../shared/hooks/useTotalCount';
 
+interface HeaderProps {
+  className?: string;
+}
+
 const Header = ({ className }: HeaderProps) => {
   const { data: totalCount = 0, isLoading, isError } = useTotalCount();
 

@@ -1,17 +1,14 @@
 # Используем Node.js 20
 FROM node:20-alpine
 
-# Устанавливаем pnpm для управления зависимостями
-RUN npm install -g pnpm
-
 # Рабочая директория
 WORKDIR /app
 
-# Копируем package.json и pnpm-lock.yaml
-COPY front/package.json front/pnpm-lock.yaml* ./
+# Копируем package.json
+COPY front/package.json ./
 
 # Устанавливаем зависимости
-RUN pnpm install --frozen-lockfile
+RUN npm install
 
 # Копируем исходный код
 COPY front/ ./
@@ -20,4 +17,4 @@ COPY front/ ./
 EXPOSE 3000
 
 # Команда запуска
-CMD ["pnpm", "run", "dev", "--host"]
+CMD ["npm", "run", "dev", "--host"]

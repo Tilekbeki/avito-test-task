@@ -1,6 +1,6 @@
 // App.tsx
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { Layout } from 'antd';
 import './App.css';
 
@@ -25,14 +25,11 @@ const AppContent = () => {
             element={
               <section id="center">
                 <div>
-                  <h1>Get started</h1>
-                  <p>
-                    Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-                  </p>
+                  <h1 className="font-extrabold">Тестовое Авито</h1>
                 </div>
-                <button className="counter" onClick={() => setCount((count) => count + 1)}>
-                  Count is {count}
-                </button>
+                <Link to="/ads" className="!text-blue-400">
+                  Перейти к объявлениям
+                </Link>
               </section>
             }
           />

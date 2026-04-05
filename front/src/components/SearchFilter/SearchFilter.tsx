@@ -90,17 +90,7 @@ const SearchFilter = ({ className }: { className?: string }) => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         suffix={<SearchOutlined />}
-        styles={{
-          affixWrapper: {
-            backgroundColor: '#F6F6F8',
-            border: 'none',
-            height: '32px',
-            padding: '5px 12px',
-          },
-          input: {
-            backgroundColor: 'transparent',
-          },
-        }}
+        className="bg-[#F6F6F8] border-none h-8 px-3"
       />
 
       <Radio.Group

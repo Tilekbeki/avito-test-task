@@ -91,8 +91,8 @@ export const validateAdForm = (formData: ItemUpdateIn): ValidationResult => {
   requiredFields.forEach(field => {
     if (field === 'title' || field === 'price') return; // уже проверили
     
-    if (field === 'type') {
-      if (!formData.params?.type) {
+if (field === 'type') {
+      if (!(formData.params as any)?.type) {
         errors.type = 'Тип обязателен для заполнения';
       }
     }
@@ -100,8 +100,8 @@ export const validateAdForm = (formData: ItemUpdateIn): ValidationResult => {
 
   // Валидация всех параметров в зависимости от категории
   if (formData.params) {
-    Object.keys(formData.params).forEach(key => {
-      const value = formData.params[key];
+Object.keys(formData.params).forEach(key => {
+      const value = (formData.params as any)[key];
       const isRequired = requiredFields.includes(key);
       const error = validateField(formData.category, key, value, isRequired);
       if (error) {

@@ -7,17 +7,8 @@ afterEach(() => {
   cleanup();
 });
 
-// Мокаем localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-global.localStorage = localStorageMock as Storage;
-
 // Мокаем window.confirm
-global.window.confirm = vi.fn(() => true);
+window.confirm = vi.fn(() => true);
 
 // Мокаем window.location
 Object.defineProperty(window, 'location', {

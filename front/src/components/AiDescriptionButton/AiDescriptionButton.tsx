@@ -1,4 +1,5 @@
 // components/AiDescriptionButton.tsx
+import React from 'react';
 import { Button, Tooltip, Space, message, Modal } from 'antd';
 import { useState } from 'react';
 import { BulbOutlined, LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -76,7 +77,7 @@ const AiDescriptionButton = ({
     const oldWords = oldText.split(/(\s+)/);
     const newWords = newText.split(/(\s+)/);
 
-    const result: JSX.Element[] = [];
+    const result: React.ReactNode[] = [];
     let i = 0,
       j = 0;
 

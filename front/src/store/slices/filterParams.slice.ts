@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { GetAdsParams } from '../../shared/types/ad.types';
+import type { GetAdsParams, Category } from '../../shared/types/ad.types';
 
 const getInitialParams = (): GetAdsParams & { viewMode: 'grid' | 'list' } => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -10,7 +10,7 @@ const getInitialParams = (): GetAdsParams & { viewMode: 'grid' | 'list' } => {
     sortColumn: (urlParams.get('sortColumn') as GetAdsParams['sortColumn']) || 'createdAt',
     sortDirection: (urlParams.get('sortDirection') as GetAdsParams['sortDirection']) || 'desc',
     q: urlParams.get('q') || undefined,
-    categories: urlParams.get('categories') ? urlParams.get('categories')!.split(',') : undefined,
+    categories: urlParams.get('categories') ? urlParams.get('categories')!.split(',') as Category[] : undefined,
     needsRevision: urlParams.has('needsRevision') ? urlParams.get('needsRevision') === 'true' : undefined,
     viewMode: (urlParams.get('viewMode') as 'grid' | 'list') || 'grid',
   };

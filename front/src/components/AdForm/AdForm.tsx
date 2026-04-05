@@ -54,12 +54,13 @@ export const AdForm: React.FC<AdFormProps> = ({
     }
 
     const requiredFields = requiredFieldsByCategory[formData.category];
-    if (requiredFields.includes('type') && !formData.params?.type) {
+    const paramsAny = formData.params as any;
+    if (requiredFields.includes('type') && !paramsAny?.type) {
       newErrors.type = 'Тип обязателен для заполнения';
     }
 
     Object.keys(formData.params).forEach((key) => {
-      const value = formData.params[key];
+      const value = paramsAny[key];
       const isRequired = requiredFields.includes(key);
       const error = validateField(formData.category, key, value, isRequired);
       if (error) {
@@ -74,7 +75,7 @@ export const AdForm: React.FC<AdFormProps> = ({
     onChange({
       ...formData,
       category,
-      params: { ...defaultParams[category] },
+      params: defaultParams[category] as any,
     });
   };
 
@@ -85,7 +86,7 @@ export const AdForm: React.FC<AdFormProps> = ({
   const handleParamsChange = (key: string, value: any) => {
     onChange({
       ...formData,
-      params: { ...formData.params, [key]: value },
+      params: { ...(formData.params as any), [key]: value },
     });
   };
 
@@ -107,7 +108,7 @@ export const AdForm: React.FC<AdFormProps> = ({
 
     // Поле type
     if (key === 'type') {
-      const currentType = value || defaultParams[formData.category].type;
+      const currentType = value || (defaultParams[formData.category] as any).type;
       return (
         <div key={key} className="mb-4">
           <RegularLabel text={paramLabels[key] || key} required={isRequired} />
@@ -239,7 +240,7 @@ export const AdForm: React.FC<AdFormProps> = ({
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
-    <div className="bg-white p-8 min-h-screen max-w-[1035px] mx-auto">
+    <div className="bg-white min-h-screen max-w-[1035px] mx-auto">
       <h1 className="text-black/85 font-medium mb-[18px] text-3xl">Редактирование объявления</h1>
 
       <div className="mb-4">

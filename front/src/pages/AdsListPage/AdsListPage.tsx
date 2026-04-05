@@ -1,4 +1,4 @@
-import AdsList from '../../components/adsList';
+import AdsList from '../../components/AdsList';
 import SearchFilter from '../../components/SearchFilter';
 import Header from '../../components/Header';
 import FiltersPanel from '../../components/FiltersPanel';

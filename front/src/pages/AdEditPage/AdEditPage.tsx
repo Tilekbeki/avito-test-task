@@ -38,11 +38,9 @@ const AdEditPage = () => {
 
       const previousAd = queryClient.getQueryData(['ad', id]);
 
-      const updatedAd = {
-        ...previousAd,
-        ...payload,
-        updatedAt: new Date().toISOString(),
-      };
+      const updatedAd = previousAd
+        ? { ...previousAd, ...payload, updatedAt: new Date().toISOString() }
+        : { ...payload, updatedAt: new Date().toISOString() };
 
       queryClient.setQueryData(['ad', id], updatedAd);
 
