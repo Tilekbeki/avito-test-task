@@ -226,12 +226,18 @@ const AdEditPage = () => {
 
     try {
       await adsService.updateAd(id, payload);
-      clearDraft();
+      clearDraft(); // ✅ Очищаем черновик после успешного сохранения
       message.success('✅ Изменения сохранены');
       navigate(`/ads/${id}`);
     } catch (e: any) {
       message.error('❌ Ошибка сохранения. Попробуйте ещё раз.');
     }
+  };
+
+  // ✅ Отмена - очищаем черновик и уходим
+  const handleCancel = () => {
+    clearDraft(); // Очищаем черновик при отмене
+    navigate(`/ads/${id}`);
   };
 
   // Текст кнопок AI
@@ -421,7 +427,7 @@ const AdEditPage = () => {
         <Button type="primary" icon={<CheckOutlined />} onClick={handleSave}>
           Сохранить изменения
         </Button>
-        <Button onClick={() => navigate(`/ads/${id}`)}>Отмена</Button>
+        <Button onClick={handleCancel}>Отмена</Button>
       </Space>
     </div>
   );
