@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Card, Tag } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
 import img from '../../assets/cover.png';
 import type { ItemWithRevision } from '../../shared/types/ad.types';
 
@@ -16,7 +15,11 @@ const categoryLabels: Record<string, string> = {
 };
 
 const RevisionTag = () => (
-  <Tag icon={<ClockCircleOutlined />} color="warning" className="flex items-center gap-1 w-fit">
+  <Tag color="warning" className="flex items-center w-fit">
+    <span
+      className="inline-block w-1 h-1 rounded-full bg-current align-middle"
+      style={{ marginTop: '-2px', marginRight: '6px' }}
+    />
     Требует доработок
   </Tag>
 );

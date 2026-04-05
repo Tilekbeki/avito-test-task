@@ -1,6 +1,6 @@
-// pages/AdViewPage.tsx
+// pages/AdviewPage/AdViewPage.tsx
 import { Alert, Button, Spin } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
 import img from '../../assets/cover-big.png';
 import { useAd } from '../../shared/hooks/useAd';
@@ -23,7 +23,7 @@ const formatDate = (date?: string) => {
 
 const AdViewPage = () => {
   const { id } = useParams();
-  const { data: ad, isLoading, isError } = useAd(id);
+  const { data: ad, isLoading, isError, refetchAd } = useAd(id);
 
   // 🔄 Loading
   if (isLoading) {
@@ -64,8 +64,10 @@ const AdViewPage = () => {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
         <h1 className="font-family-roboto text-[28px] sm:text-[32px] font-medium">{ad.title}</h1>
-        <div className="text-[28px] sm:text-[30px] font-family-roboto font-medium text-black/85">
-          {ad.price} ₽
+        <div className="flex items-center gap-2">
+          <div className="text-[28px] sm:text-[30px] font-family-roboto font-medium text-black/85">
+            {ad.price} ₽
+          </div>
         </div>
       </div>
 
@@ -89,16 +91,13 @@ const AdViewPage = () => {
 
       <hr className="mb-8 border-[#F0F0F0]" />
 
-      {/* MAIN CONTENT - Адаптивная версия */}
+      {/* MAIN CONTENT */}
       <div className="flex flex-col lg:flex-row gap-8 mb-8">
-        {/* Изображение - на маленьких экранах w-full */}
         <div className="w-full lg:w-[480px] lg:h-[360px] flex-shrink-0">
           <img src={img} alt="товар" className="w-full h-auto lg:h-full object-cover rounded" />
         </div>
 
-        {/* Контент справа - на маленьких экранах тоже w-full */}
         <div className="flex flex-col gap-6 w-full">
-          {/* Блок "Требуются доработки" - адаптивная ширина */}
           {showAttention && (
             <Alert
               title="Требуются доработки"
@@ -114,11 +113,10 @@ const AdViewPage = () => {
               }
               type="warning"
               showIcon
-              className="w-full lg:!max-w-[512px] animate-pulse [&_.ant-alert-icon]:!text-[18px] [&_.ant-alert-icon]:!w-[18px] [&_.ant-alert-icon]:!h-[18px] [&_.ant-alert-title]:!font-roboto [&_.ant-alert-title]:!font-semibold [&_.ant-alert-title]:!text-base [&_.ant-alert-description]:!font-roboto [&_.ant-alert-description]:!font-normal"
+              className="w-full lg:!max-w-[512px] animate-pulse"
             />
           )}
 
-          {/* Характеристики */}
           <div>
             <div className="mb-2 text-[22px] font-family-roboto font-medium">Характеристики</div>
             {ad.params && Object.keys(ad.params).length > 0 ? (
@@ -148,7 +146,6 @@ const AdViewPage = () => {
         </div>
       </div>
 
-      {/* DESCRIPTION - адаптивная ширина */}
       <div className="w-full lg:max-w-[480px]">
         <div className="mb-2 text-[22px] font-family-roboto font-medium">Описание</div>
         <div className="text-[#1E1E1E] font-family-roboto leading-[140%] text-[16px] leading-relaxed">

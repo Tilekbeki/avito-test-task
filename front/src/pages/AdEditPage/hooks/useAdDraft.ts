@@ -1,4 +1,4 @@
-// hooks/useAdDraft.ts
+// pages/AdEditPage/hooks/useAdDraft.ts
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import { adsService } from '../../../services/ads.service';
@@ -18,22 +18,29 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<ItemUpdateIn | null>(null);
-  const originalDataRef = useRef<ItemUpdateIn | null>(null); // Храним оригинальные данные
-  const isFirstLoadRef = useRef(true); // Флаг первой загрузки
+  const originalDataRef = useRef<ItemUpdateIn | null>(null);
+  const isMountedRef = useRef(true);
+  const hasShownDialogRef = useRef(false);
 
   // Загрузка черновика из localStorage и с сервера
   useEffect(() => {
     if (!id) return;
 
+    isMountedRef.current = true;
+    hasShownDialogRef.current = false;
+
     const loadDraft = async () => {
       try {
         setLoading(true);
+        
+        // Загружаем данные с сервера
         const data = await adsService.getAdById(id);
 
-        // Сохраняем существующий тип из данных
-        const mergedParams = { ...defaultParams[data.category], ...data.params };
+        if (!isMountedRef.current) return;
 
-        // Если тип есть в данных, используем его
+        // Формируем данные с сервера
+        const mergedParams = { ...defaultParams[data.category], ...data.params };
+        
         if (data.params?.type) {
           mergedParams.type = data.params.type;
         }
@@ -46,21 +53,21 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
           params: mergedParams,
         };
 
-        // Сохраняем оригинальные данные с сервера
+        // Сохраняем оригинальные данные
         originalDataRef.current = serverData;
 
-        // Проверяем наличие черновика
+        // Проверяем черновик
         const draftKey = `ad_draft_${id}`;
         const savedDraft = localStorage.getItem(draftKey);
 
-        if (savedDraft) {
+        if (savedDraft && !hasShownDialogRef.current) {
           const draft = JSON.parse(savedDraft);
-          
-          // Проверяем, отличается ли черновик от серверных данных
           const isDraftDifferent = JSON.stringify(draft) !== JSON.stringify(serverData);
           
           if (isDraftDifferent) {
+            hasShownDialogRef.current = true;
             const shouldRestore = window.confirm('Найден несохраненный черновик. Восстановить?');
+            
             if (shouldRestore) {
               setFormData(draft);
               message.info('Черновик восстановлен');
@@ -69,7 +76,6 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
               localStorage.removeItem(draftKey);
             }
           } else {
-            // Черновик совпадает с серверными данными - удаляем его
             setFormData(serverData);
             localStorage.removeItem(draftKey);
           }
@@ -77,51 +83,75 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
           setFormData(serverData);
         }
       } catch (e: any) {
-        setError(e.message || 'Ошибка при загрузке объявления');
+        if (isMountedRef.current) {
+          setError(e.message || 'Ошибка при загрузке объявления');
+        }
       } finally {
-        setLoading(false);
-        isFirstLoadRef.current = false;
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
       }
     };
 
     loadDraft();
+
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [id]);
 
-  // Сохраняем черновик в localStorage только если данные изменились
+  // Сохранение черновика
   const saveDraft = useCallback(() => {
-    // Не сохраняем во время первой загрузки
-    if (isFirstLoadRef.current) return;
+    if (!formData || !id || !originalDataRef.current) return;
     
-    if (formData && id && originalDataRef.current) {
-      // Проверяем, изменились ли данные
-      const isChanged = JSON.stringify(formData) !== JSON.stringify(originalDataRef.current);
-      
-      if (isChanged) {
-        const draftKey = `ad_draft_${id}`;
-        localStorage.setItem(draftKey, JSON.stringify(formData));
-        console.log('Черновик сохранен');
-      } else {
-        // Если данные вернулись к оригинальным - удаляем черновик
-        const draftKey = `ad_draft_${id}`;
-        if (localStorage.getItem(draftKey)) {
-          localStorage.removeItem(draftKey);
-          console.log('Черновик удален (данные совпадают с оригиналом)');
-        }
+    const isChanged = JSON.stringify(formData) !== JSON.stringify(originalDataRef.current);
+    const draftKey = `ad_draft_${id}`;
+    
+    if (isChanged) {
+      localStorage.setItem(draftKey, JSON.stringify(formData));
+      console.log('💾 Черновик сохранен');
+    } else {
+      if (localStorage.getItem(draftKey)) {
+        localStorage.removeItem(draftKey);
+        console.log('🗑️ Черновик удален');
       }
     }
   }, [formData, id]);
 
+  // Авто-сохранение с debounce
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  
   useEffect(() => {
-    saveDraft();
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    saveTimeoutRef.current = setTimeout(() => {
+      saveDraft();
+    }, 1000);
+    
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, [formData, saveDraft]);
 
   // Очистка черновика
   const clearDraft = useCallback(() => {
     if (id) {
-      localStorage.removeItem(`ad_draft_${id}`);
-      console.log('Черновик очищен');
+      const draftKey = `ad_draft_${id}`;
+      localStorage.removeItem(draftKey);
+      console.log('🧹 Черновик очищен');
     }
   }, [id]);
 
-  return { loading, error, formData, setFormData, saveDraft, clearDraft };
+  return { 
+    loading, 
+    error, 
+    formData, 
+    setFormData, 
+    saveDraft, 
+    clearDraft 
+  };
 };

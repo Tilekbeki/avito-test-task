@@ -9,19 +9,35 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Базовый стиль для app-content */
 .app-content {
   padding: 24px 0;
-  background: #f0f2f5;
+  background: #f0f2f5; /* Фон по умолчанию для главной страницы */
+  min-height: 100vh;
+}
+
+/* Стиль для страниц объявлений (список, просмотр, редактирование) */
+.app-content.ads-page {
+  background: white;
 }
 
 .container {
-  max-width: 1399px; /* Или любую другую максимальную ширину */
+  max-width: 1399px;
   margin: 0 auto;
   padding: 32px;
   width: 100%;
 }
 
-/* Если вы хотите, чтобы header тоже был центрирован */
+/* Для страницы редактирования добавляем градиентный фон к контейнеру */
+.ads-page .edit-page-wrapper {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin: -32px;
+  padding: 32px;
+  min-height: calc(100vh - 48px);
+  border-radius: 8px;
+}
+
+/* Навигация */
 .navigation ul {
   max-width: 1200px;
   margin: 0 auto;

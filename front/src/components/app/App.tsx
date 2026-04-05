@@ -1,6 +1,7 @@
+// App.tsx
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Layout, theme } from 'antd';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Layout } from 'antd';
 import './App.css';
 
 import AdsListPage from '../../pages/AdsListPage/AdsListPage';
@@ -9,45 +10,49 @@ import AdViewPage from '../../pages/AdviewPage/AdViewPage';
 
 const { Content } = Layout;
 
-function App() {
+// Компонент для обертки с динамическим классом
+const AppContent = () => {
+  const location = useLocation();
   const [count, setCount] = useState(0);
 
+  // Проверяем, находится ли пользователь на страницах объявлений
+  const isAdsPage = location.pathname.startsWith('/ads/');
+
+  return (
+    <Content className={`app-content ${isAdsPage ? 'ads-page' : ''}`}>
+      <div className="container">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <section id="center">
+                <div>
+                  <h1>Get started</h1>
+                  <p>
+                    Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+                  </p>
+                </div>
+                <button className="counter" onClick={() => setCount((count) => count + 1)}>
+                  Count is {count}
+                </button>
+              </section>
+            }
+          />
+          <Route path="/ads" element={<AdsListPage />} />
+          <Route path="/ads/:id" element={<AdViewPage />} />
+          <Route path="/ads/create" element={<AdEditPage />} />
+          <Route path="/ads/:id/edit" element={<AdEditPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </Content>
+  );
+};
+
+function App() {
   return (
     <BrowserRouter>
-      <Layout className="app-layout">
-        <Content className="app-content">
-          <div className="container">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <section id="center">
-                    <div>
-                      <h1>Get started</h1>
-                      <p>
-                        Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-                      </p>
-                    </div>
-                    <button className="counter" onClick={() => setCount((count) => count + 1)}>
-                      Count is {count}
-                    </button>
-                  </section>
-                }
-              />
-
-              <Route path="/ads" element={<AdsListPage />} />
-
-              <Route path="/ads/:id" element={<AdViewPage />} />
-
-              <Route path="/ads/create" element={<AdEditPage />} />
-
-              <Route path="/ads/:id/edit" element={<AdEditPage />} />
-
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        </Content>
-      </Layout>
+      <AppContent />
     </BrowserRouter>
   );
 }
