@@ -6,88 +6,28 @@ import { CheckOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { adsService } from '../../services/ads.service';
 import { aiService } from '../../services/ai.service';
 import type { ItemUpdateIn, Category } from '../../shared/types/ad.types';
+import { useAdDraft } from './hooks';
+import { Label, RegularLabel } from './components/Label';
+import AiPriceButton from '../../components/AiPriceButton/AiPriceButton';
+import AiDescriptionButton from '../../components/AiDescriptionButton';
+import {
+  categoryOptions,
+  paramLabels,
+  defaultParams,
+  requiredFieldsByCategory,
+  getTypeOptions,
+} from './constants';
 
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
-const categoryOptions = [
-  { value: 'electronics', label: 'Электроника' },
-  { value: 'auto', label: 'Авто' },
-  { value: 'real_estate', label: 'Недвижимость' },
-];
-
-const paramLabels: Record<string, string> = {
-  brand: 'Бренд',
-  model: 'Модель',
-  yearOfManufacture: 'Год выпуска',
-  transmission: 'Коробка передач',
-  mileage: 'Пробег',
-  enginePower: 'Мощность двигателя',
-  type: 'Тип',
-  condition: 'Состояние',
-  color: 'Цвет',
-  address: 'Адрес',
-  area: 'Площадь',
-  floor: 'Этаж',
-};
-
-const defaultParams = {
-  electronics: { type: 'phone', brand: '', model: '', condition: '', color: '' },
-  auto: {
-    brand: '',
-    model: '',
-    yearOfManufacture: '',
-    transmission: '',
-    mileage: '',
-    enginePower: '',
-  },
-  real_estate: { type: 'flat', address: '', area: '', floor: '' },
-};
-
-// Обязательные поля для категорий
-const requiredFieldsByCategory: Record<Category, string[]> = {
-  electronics: ['title', 'price', 'type'],
-  auto: ['title', 'price'],
-  real_estate: ['title', 'price', 'type'],
-};
-
-// Компонент Label со звездочкой (только для основных полей)
-const Label = ({ text, required }: { text: string; required?: boolean }) => (
-  <label className="block font-family-inter mb-2 font-semibold text-[16px]">
-    {required && <span className="text-red-500 mr-1">*</span>}
-    {text}
-  </label>
-);
-
-// Компонент для обычного текста (не жирный)
-const RegularLabel = ({ text, required }: { text: string; required?: boolean }) => (
-  <div className="block text-black/85 text-[14px] font-family-roboto mb-2">
-    {required && <span className="text-red-500 mr-1">*</span>}
-    {text}
-  </div>
-);
-
-// Опции для type в зависимости от категории
-const getTypeOptions = (category: Category) => {
-  if (category === 'electronics') {
-    return [
-      { value: 'phone', label: 'Телефон' },
-      { value: 'laptop', label: 'Ноутбук' },
-      { value: 'misc', label: 'Другое' },
-    ];
-  }
-  if (category === 'real_estate') {
-    return [
-      { value: 'flat', label: 'Квартира' },
-      { value: 'house', label: 'Дом' },
-      { value: 'room', label: 'Комната' },
-    ];
-  }
-  return [];
-};
-
 const AdEditPage = () => {
-  // Состояния для AI цены
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { loading, error, formData, setFormData, clearDraft } = useAdDraft(id);
+
+  // AI состояния для цены
   const [aiPriceLoading, setAiPriceLoading] = useState(false);
   const [aiPriceFailed, setAiPriceFailed] = useState(false);
   const [priceTooltipOpen, setPriceTooltipOpen] = useState(false);
@@ -96,84 +36,13 @@ const AdEditPage = () => {
     suggestions: string[];
   } | null>(null);
 
-  // Состояния для AI описания
+  // AI состояния для описания
   const [aiDescLoading, setAiDescLoading] = useState(false);
   const [aiDescFailed, setAiDescFailed] = useState(false);
   const [descTooltipOpen, setDescTooltipOpen] = useState(false);
   const [aiDescResponse, setAiDescResponse] = useState<string | null>(null);
 
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ItemUpdateIn | null>(null);
-
-  // 🔥 Загрузка черновика из localStorage
-  useEffect(() => {
-    if (!id) return;
-
-    const loadDraft = async () => {
-      try {
-        setLoading(true);
-        const data = await adsService.getAdById(id);
-
-        // Сохраняем существующий тип из данных
-        const mergedParams = { ...defaultParams[data.category], ...data.params };
-
-        // Если тип есть в данных, используем его
-        if (data.params?.type) {
-          mergedParams.type = data.params.type;
-        }
-
-        // Проверяем наличие черновика
-        const draftKey = `ad_draft_${id}`;
-        const savedDraft = localStorage.getItem(draftKey);
-
-        if (savedDraft) {
-          const draft = JSON.parse(savedDraft);
-          const shouldRestore = window.confirm('Найден несохраненный черновик. Восстановить?');
-          if (shouldRestore) {
-            setFormData(draft);
-            message.info('Черновик восстановлен');
-          } else {
-            setFormData({
-              category: data.category,
-              title: data.title,
-              description: data.description || '',
-              price: data.price,
-              params: mergedParams,
-            });
-            localStorage.removeItem(draftKey);
-          }
-        } else {
-          setFormData({
-            category: data.category,
-            title: data.title,
-            description: data.description || '',
-            price: data.price,
-            params: mergedParams,
-          });
-        }
-      } catch (e: any) {
-        setError(e.message || 'Ошибка при загрузке объявления');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDraft();
-  }, [id]);
-
-  // 🔥 Сохраняем черновик в localStorage при изменениях
-  useEffect(() => {
-    if (formData && id) {
-      const draftKey = `ad_draft_${id}`;
-      localStorage.setItem(draftKey, JSON.stringify(formData));
-    }
-  }, [formData, id]);
-
-  // Обработчик AI запроса для цены
+  // AI запрос для цены
   const handleAiPriceClick = async () => {
     if (!formData) return;
     setAiPriceLoading(true);
@@ -192,7 +61,7 @@ const AdEditPage = () => {
     }
   };
 
-  // Обработчик AI запроса для описания
+  // AI запрос для описания
   const handleAiDescClick = async () => {
     if (!formData) return;
     setAiDescLoading(true);
@@ -217,11 +86,11 @@ const AdEditPage = () => {
 
   // Применить цену
   const handleApplyPrice = () => {
-    if (aiPriceResponse?.suggestions[0]) {
+    if (aiPriceResponse?.suggestions[0] && formData) {
       const priceMatch = aiPriceResponse.suggestions[0].match(/(\d[\d\s]*)\s*₽/);
       if (priceMatch) {
         const price = parseInt(priceMatch[1].replace(/\s/g, ''), 10);
-        if (!isNaN(price) && formData) {
+        if (!isNaN(price)) {
           setFormData({ ...formData, price });
           message.success('Цена применена');
           setPriceTooltipOpen(false);
@@ -239,7 +108,7 @@ const AdEditPage = () => {
     }
   };
 
-  // Контент тултипа для цены (успех) - теперь всё в виде списка
+  // Тултип для цены (успех)
   const successPriceTooltipContent = (
     <div style={{ maxWidth: 350 }}>
       <Text strong>Ответ от AI:</Text>
@@ -264,10 +133,10 @@ const AdEditPage = () => {
     </div>
   );
 
-  // Контент тултипа для описания (успех)
+  // Тултип для описания (успех)
   const successDescTooltipContent = (
     <div style={{ maxWidth: 400 }}>
-      <Paragraph style={{ marginBottom: 12 }}>{aiDescResponse}</Paragraph>
+      <Text style={{ display: 'block', marginBottom: 12 }}>{aiDescResponse}</Text>
       <Space>
         <Button size="small" type="primary" onClick={handleApplyDescription}>
           Применить
@@ -279,15 +148,15 @@ const AdEditPage = () => {
     </div>
   );
 
-  // Контент тултипа для ошибки (общий)
+  // Тултип для ошибки
   const errorTooltipContent = (onRetry: () => void, onClose: () => void) => (
     <div style={{ maxWidth: 300 }}>
       <Text type="danger" strong>
         Произошла ошибка при запросе к AI
       </Text>
-      <Paragraph style={{ marginTop: 8, marginBottom: 8 }}>
+      <Text style={{ display: 'block', marginTop: 8, marginBottom: 8 }}>
         Попробуйте повторить запрос или закройте уведомление
-      </Paragraph>
+      </Text>
       <Space style={{ marginTop: 8 }}>
         <Button size="small" onClick={onRetry}>
           Повторить запрос
@@ -311,7 +180,7 @@ const AdEditPage = () => {
     });
   };
 
-  // 🔥 СОХРАНЕНИЕ - правильная передача данных
+  // Сохранение
   const handleSave = async () => {
     if (!formData || !id) return;
 
@@ -325,37 +194,26 @@ const AdEditPage = () => {
       return;
     }
 
-    // Валидация для type (если обязательно)
     const requiredFields = requiredFieldsByCategory[formData.category];
     if (requiredFields.includes('type') && !formData.params?.type) {
       message.error('Тип обязателен для заполнения');
       return;
     }
 
-    // 🔥 ФОРМИРУЕМ ПРАВИЛЬНЫЙ PAYLOAD с преобразованием типов
+    // Трансформация данных
     const transformedParams = { ...formData.params };
 
-    // Преобразуем числовые поля для авто
     if (formData.category === 'auto') {
-      if (transformedParams.yearOfManufacture) {
+      if (transformedParams.yearOfManufacture)
         transformedParams.yearOfManufacture = Number(transformedParams.yearOfManufacture);
-      }
-      if (transformedParams.mileage) {
-        transformedParams.mileage = Number(transformedParams.mileage);
-      }
-      if (transformedParams.enginePower) {
+      if (transformedParams.mileage) transformedParams.mileage = Number(transformedParams.mileage);
+      if (transformedParams.enginePower)
         transformedParams.enginePower = Number(transformedParams.enginePower);
-      }
     }
 
-    // Преобразуем числовые поля для недвижимости
     if (formData.category === 'real_estate') {
-      if (transformedParams.area) {
-        transformedParams.area = Number(transformedParams.area);
-      }
-      if (transformedParams.floor) {
-        transformedParams.floor = Number(transformedParams.floor);
-      }
+      if (transformedParams.area) transformedParams.area = Number(transformedParams.area);
+      if (transformedParams.floor) transformedParams.floor = Number(transformedParams.floor);
     }
 
     const payload = {
@@ -366,36 +224,29 @@ const AdEditPage = () => {
       params: transformedParams,
     };
 
-    console.log('Saving payload:', JSON.stringify(payload, null, 2));
-
     try {
       await adsService.updateAd(id, payload);
-      localStorage.removeItem(`ad_draft_${id}`);
+      clearDraft();
       message.success('✅ Изменения сохранены');
       navigate(`/ads/${id}`);
     } catch (e: any) {
-      console.error('Save error:', e);
-      message.error(
-        '❌ Ошибка сохранения. При попытке сохранить изменения произошла ошибка. Попробуйте ещё раз или зайдите позже.'
-      );
+      message.error('❌ Ошибка сохранения. Попробуйте ещё раз.');
     }
   };
 
-  // Определяем текст кнопки для цены
+  // Текст кнопок AI
   const getPriceButtonText = () => {
     if (aiPriceLoading) return 'Выполняется запрос';
     if (aiPriceFailed) return 'Повторить запрос';
     return 'Узнать рыночную цену';
   };
 
-  // Определяем текст кнопки для описания
   const getDescButtonText = () => {
     if (aiDescLoading) return 'Выполняется запрос';
     if (aiDescFailed) return 'Повторить запрос';
     return formData.description ? 'Улучшить описание' : 'Придумать описание';
   };
 
-  // Проверка, является ли поле обязательным
   const isFieldRequired = (key: string): boolean => {
     return requiredFieldsByCategory[formData.category]?.includes(key);
   };
@@ -406,7 +257,7 @@ const AdEditPage = () => {
 
       {/* Категория */}
       <div className="mb-4">
-        <label className="block font-family-inter mb-2 font-semibold text-[16px]">Категория</label>
+        <Label text="Категория" />
         <Select
           value={formData.category}
           onChange={handleCategoryChange}
@@ -431,7 +282,7 @@ const AdEditPage = () => {
         )}
       </div>
 
-      {/* Цена с тултипом */}
+      {/* Цена */}
       <div className="mb-4">
         <Label text="Цена" required />
         <div className="flex gap-2">
@@ -443,32 +294,10 @@ const AdEditPage = () => {
             required
             className="!w-[456px]"
           />
-          <Tooltip
-            open={priceTooltipOpen}
-            onOpenChange={setPriceTooltipOpen}
-            title={
-              aiPriceFailed
-                ? errorTooltipContent(handleAiPriceClick, () => setPriceTooltipOpen(false))
-                : successPriceTooltipContent
-            }
-            trigger="click"
-            placement="bottomLeft"
-            color="white"
-            overlayInnerStyle={{
-              color: '#000',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              border: '1px solid #e5e7eb',
-            }}
-          >
-            <Button
-              type="default"
-              onClick={handleAiPriceClick}
-              loading={aiPriceLoading}
-              icon={aiPriceFailed && !aiPriceLoading ? <ReloadOutlined /> : undefined}
-            >
-              {getPriceButtonText()}
-            </Button>
-          </Tooltip>
+          <AiPriceButton
+            formData={formData}
+            onApply={(price) => setFormData({ ...formData, price })}
+          />
         </div>
         {(!formData.price || formData.price <= 0) && (
           <Text type="danger" className="block mt-1">
@@ -477,14 +306,13 @@ const AdEditPage = () => {
         )}
       </div>
 
-      {/* Характеристики - каждое поле с новой строки и шириной 456px */}
+      {/* Характеристики */}
       <div className="mb-6">
-        <div className="block font-family-inter mb-2 font-semibold text-[16px]">Характеристики</div>
+        <Label text="Характеристики" />
         <div className="flex flex-col gap-3">
           {Object.entries(formData.params).map(([key, value]) => {
             const isRequired = isFieldRequired(key);
 
-            // SELECT: type (используем RegularLabel вместо Label)
             if (key === 'type') {
               const currentType = value || defaultParams[formData.category].type;
               return (
@@ -493,10 +321,7 @@ const AdEditPage = () => {
                   <Select
                     value={currentType}
                     onChange={(val) =>
-                      setFormData({
-                        ...formData,
-                        params: { ...formData.params, [key]: val },
-                      })
+                      setFormData({ ...formData, params: { ...formData.params, [key]: val } })
                     }
                     options={getTypeOptions(formData.category)}
                     className="!w-[456px]"
@@ -511,13 +336,10 @@ const AdEditPage = () => {
               );
             }
 
-            // SELECT: condition
             if (key === 'condition') {
               return (
                 <div key={key} className="mb-2">
-                  <div className="block text-black/85 text-[14px] font-family-roboto mb-2">
-                    {paramLabels[key] || key}
-                  </div>
+                  <RegularLabel text={paramLabels[key] || key} />
                   <Select
                     value={value}
                     allowClear
@@ -527,10 +349,7 @@ const AdEditPage = () => {
                       { value: 'used', label: 'Б/У' },
                     ]}
                     onChange={(val) =>
-                      setFormData({
-                        ...formData,
-                        params: { ...formData.params, [key]: val },
-                      })
+                      setFormData({ ...formData, params: { ...formData.params, [key]: val } })
                     }
                     className="!w-[456px]"
                   />
@@ -538,13 +357,10 @@ const AdEditPage = () => {
               );
             }
 
-            // SELECT: transmission
             if (key === 'transmission') {
               return (
                 <div key={key} className="mb-2">
-                  <div className="block text-black/85 text-[14px] font-family-roboto mb-2">
-                    {paramLabels[key] || key}
-                  </div>
+                  <RegularLabel text={paramLabels[key] || key} />
                   <Select
                     value={value}
                     allowClear
@@ -554,10 +370,7 @@ const AdEditPage = () => {
                       { value: 'manual', label: 'Механическая' },
                     ]}
                     onChange={(val) =>
-                      setFormData({
-                        ...formData,
-                        params: { ...formData.params, [key]: val },
-                      })
+                      setFormData({ ...formData, params: { ...formData.params, [key]: val } })
                     }
                     className="!w-[456px]"
                   />
@@ -565,22 +378,16 @@ const AdEditPage = () => {
               );
             }
 
-            // обычный input
             return (
               <div key={key} className="mb-2">
-                <div className="block text-black/85 text-[14px] font-family-roboto mb-2">
-                  {paramLabels[key] || key}
-                </div>
+                <RegularLabel text={paramLabels[key] || key} />
                 <Input
-                  value={value as any}
+                  value={value as string}
                   placeholder={`Введите ${paramLabels[key]?.toLowerCase()}`}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      params: {
-                        ...formData.params,
-                        [key]: e.target.value,
-                      },
+                      params: { ...formData.params, [key]: e.target.value },
                     })
                   }
                   className="!w-[456px]"
@@ -591,7 +398,7 @@ const AdEditPage = () => {
         </div>
       </div>
 
-      {/* Описание с тултипом */}
+      {/* Описание */}
       <div className="mb-4">
         <Label text="Описание" />
         <div className="flex flex-col gap-2">
@@ -603,33 +410,10 @@ const AdEditPage = () => {
             maxLength={1000}
             className="!w-[600px]"
           />
-          <Tooltip
-            open={descTooltipOpen}
-            onOpenChange={setDescTooltipOpen}
-            title={
-              aiDescFailed
-                ? errorTooltipContent(handleAiDescClick, () => setDescTooltipOpen(false))
-                : successDescTooltipContent
-            }
-            trigger="click"
-            placement="bottomLeft"
-            color="white"
-            overlayInnerStyle={{
-              color: '#000',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              border: '1px solid #e5e7eb',
-            }}
-          >
-            <Button
-              type="default"
-              onClick={handleAiDescClick}
-              loading={aiDescLoading}
-              icon={aiDescFailed && !aiDescLoading ? <ReloadOutlined /> : <EditOutlined />}
-              style={{ width: 'fit-content' }}
-            >
-              {getDescButtonText()}
-            </Button>
-          </Tooltip>
+          <AiDescriptionButton
+            formData={formData}
+            onApply={(desc) => setFormData({ ...formData, description: desc })}
+          />
         </div>
       </div>
 
