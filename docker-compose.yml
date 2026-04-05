@@ -1,19 +1,20 @@
-version: "3"
-
 services:
   client:
     build:
-      context: .
+      context: ./front
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:5173"
     environment:
-      - VITE_API_URL=http://server:8080
-      - VITE_OLLAMA_URL=http://ollama:11434
+      - VITE_API_URL=http://localhost:8080
+      - VITE_OLLAMA_URL=http://localhost:11434
       - VITE_AI_MODEL=llama3
     depends_on:
       - server
       - ollama
+    volumes:
+      - ./front:/app
+      - /app/node_modules
 
   server:
     build:
@@ -24,7 +25,10 @@ services:
     depends_on:
       - ollama
     environment:
-      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_HOST=http://localhost:11434
+    volumes:
+      - ./server:/app
+      - /app/node_modules
 
   ollama:
     image: ollama/ollama

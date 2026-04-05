@@ -1,0 +1,185 @@
+├── .env.example
+├── .gitignore
+├── docker-compose.yml
+├── front
+│  ├── .env
+│  ├── .eslintrc
+│  ├── .prettierignore
+│  ├── .prettierrc
+│  ├── Dockerfile
+│  ├── eslint.config.js
+│  ├── index.html
+│  ├── package-lock.json
+│  ├── package.json
+│  ├── public
+│  │  ├── favicon.svg
+│  │  └── icons.svg
+│  ├── src
+│  │  ├── assets
+│  │  │  ├── cover-big.png
+│  │  │  ├── cover.png
+│  │  │  ├── hero.png
+│  │  │  ├── react.svg
+│  │  │  └── vite.svg
+│  │  ├── components
+│  │  │  ├── adCard
+│  │  │  │  ├── AdCard.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── AdForm
+│  │  │  │  ├── AdForm.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── AdsList
+│  │  │  │  ├── AdsList.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── AiDescriptionButton
+│  │  │  │  ├── AiDescriptionButton.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── AiPriceButton
+│  │  │  │  ├── AiPriceButton.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── App
+│  │  │  │  ├── App.css
+│  │  │  │  └── App.tsx
+│  │  │  ├── FiltersPanel
+│  │  │  │  ├── FiltersPanel.module.scss
+│  │  │  │  ├── FiltersPanel.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── Header
+│  │  │  │  ├── Header.tsx
+│  │  │  │  └── index.tsx
+│  │  │  ├── Label
+│  │  │  │  ├── index.tsx
+│  │  │  │  └── Label.tsx
+│  │  │  ├── Pagination
+│  │  │  │  ├── index.tsx
+│  │  │  │  └── Pagination.tsx
+│  │  │  └── SearchFilter
+│  │  │    ├── index.tsx
+│  │  │    ├── SearchFilter.module.scss
+│  │  │    └── SearchFilter.tsx
+│  │  ├── fonts
+│  │  │  ├── inter
+│  │  │  │  ├── Inter_18pt-Black.ttf
+│  │  │  │  ├── Inter_18pt-BlackItalic.ttf
+│  │  │  │  ├── Inter_18pt-Bold.ttf
+│  │  │  │  ├── Inter_18pt-BoldItalic.ttf
+│  │  │  │  ├── Inter_18pt-ExtraBold.ttf
+│  │  │  │  ├── Inter_18pt-ExtraBoldItalic.ttf
+│  │  │  │  ├── Inter_18pt-ExtraLight.ttf
+│  │  │  │  ├── Inter_18pt-ExtraLightItalic.ttf
+│  │  │  │  ├── Inter_18pt-Italic.ttf
+│  │  │  │  ├── Inter_18pt-Light.ttf
+│  │  │  │  ├── Inter_18pt-LightItalic.ttf
+│  │  │  │  ├── Inter_18pt-Medium.ttf
+│  │  │  │  ├── Inter_18pt-MediumItalic.ttf
+│  │  │  │  ├── Inter_18pt-Regular.ttf
+│  │  │  │  ├── Inter_18pt-SemiBold.ttf
+│  │  │  │  ├── Inter_18pt-SemiBoldItalic.ttf
+│  │  │  │  ├── Inter_18pt-Thin.ttf
+│  │  │  │  ├── Inter_18pt-ThinItalic.ttf
+│  │  │  │  ├── Inter_24pt-Black.ttf
+│  │  │  │  ├── Inter_24pt-BlackItalic.ttf
+│  │  │  │  ├── Inter_24pt-Bold.ttf
+│  │  │  │  ├── Inter_24pt-BoldItalic.ttf
+│  │  │  │  ├── Inter_24pt-ExtraBold.ttf
+│  │  │  │  ├── Inter_24pt-ExtraBoldItalic.ttf
+│  │  │  │  ├── Inter_24pt-ExtraLight.ttf
+│  │  │  │  ├── Inter_24pt-ExtraLightItalic.ttf
+│  │  │  │  ├── Inter_24pt-Italic.ttf
+│  │  │  │  ├── Inter_24pt-Light.ttf
+│  │  │  │  ├── Inter_24pt-LightItalic.ttf
+│  │  │  │  ├── Inter_24pt-Medium.ttf
+│  │  │  │  ├── Inter_24pt-MediumItalic.ttf
+│  │  │  │  ├── Inter_24pt-Regular.ttf
+│  │  │  │  ├── Inter_24pt-SemiBold.ttf
+│  │  │  │  ├── Inter_24pt-SemiBoldItalic.ttf
+│  │  │  │  ├── Inter_24pt-Thin.ttf
+│  │  │  │  ├── Inter_24pt-ThinItalic.ttf
+│  │  │  │  ├── Inter_28pt-Black.ttf
+│  │  │  │  ├── Inter_28pt-BlackItalic.ttf
+│  │  │  │  ├── Inter_28pt-Bold.ttf
+│  │  │  │  ├── Inter_28pt-BoldItalic.ttf
+│  │  │  │  ├── Inter_28pt-ExtraBold.ttf
+│  │  │  │  ├── Inter_28pt-ExtraBoldItalic.ttf
+│  │  │  │  ├── Inter_28pt-ExtraLight.ttf
+│  │  │  │  ├── Inter_28pt-ExtraLightItalic.ttf
+│  │  │  │  ├── Inter_28pt-Italic.ttf
+│  │  │  │  ├── Inter_28pt-Light.ttf
+│  │  │  │  ├── Inter_28pt-LightItalic.ttf
+│  │  │  │  ├── Inter_28pt-Medium.ttf
+│  │  │  │  ├── Inter_28pt-MediumItalic.ttf
+│  │  │  │  ├── Inter_28pt-Regular.ttf
+│  │  │  │  ├── Inter_28pt-SemiBold.ttf
+│  │  │  │  ├── Inter_28pt-SemiBoldItalic.ttf
+│  │  │  │  ├── Inter_28pt-Thin.ttf
+│  │  │  │  └── Inter_28pt-ThinItalic.ttf
+│  │  │  └── roboto
+│  │  │    ├── Roboto-Bold.ttf
+│  │  │    ├── Roboto-Medium.ttf
+│  │  │    ├── Roboto-Regular.ttf
+│  │  │    └── Roboto-SemiBold.ttf
+│  │  ├── index.css
+│  │  ├── main.tsx
+│  │  ├── pages
+│  │  │  ├── AdEditPage
+│  │  │  │  └── AdEditPage.tsx
+│  │  │  ├── AdsListPage
+│  │  │  │  └── AdsListPage.tsx
+│  │  │  ├── AdviewPage
+│  │  │  │  └── AdViewPage.tsx
+│  │  │  └── index.tsx
+│  │  ├── services
+│  │  │  ├── ads.service.ts
+│  │  │  ├── ai.service.ts
+│  │  │  └── client.ts
+│  │  ├── shared
+│  │  │  ├── config.ts
+│  │  │  ├── data
+│  │  │  │  └── constants.ts
+│  │  │  ├── hooks
+│  │  │  │  ├── useAd.ts
+│  │  │  │  ├── useAdDraft.ts
+│  │  │  │  ├── useAds.ts
+│  │  │  │  ├── useAiDescription.ts
+│  │  │  │  ├── useAiPrice.ts
+│  │  │  │  ├── useDebounce.ts
+│  │  │  │  ├── useSyncUrlWithRedux.ts
+│  │  │  │  └── useTotalCount.ts
+│  │  │  ├── types
+│  │  │  │  ├── ad.types.ts
+│  │  │  │  ├── api.types.ts
+│  │  │  │  └── filters.types.ts
+│  │  │  └── utils
+│  │  │    ├── formUtils.ts
+│  │  │    ├── transformParams.ts
+│  │  │    └── validation.ts
+│  │  ├── store
+│  │  │  ├── slices
+│  │  │  │  └── filterParams.slice.ts
+│  │  │  └── store.ts
+│  │  └── test
+│  │    ├── ad.types.test.ts
+│  │    ├── AdCard.test.tsx
+│  │    ├── formUtils.test.ts
+│  │    ├── services.test.ts
+│  │    └── setup.ts
+│  ├── tsconfig.app.json
+│  ├── tsconfig.json
+│  ├── tsconfig.node.json
+│  ├── vite.config.ts
+│  └── vitest.config.ts
+├── README.md
+└── server
+  ├── .env
+  ├── data
+  │  └── items.json
+  ├── DockerFile
+  ├── package-lock.json
+  ├── package.json
+  ├── server.ts
+  ├── src
+  │  ├── constants.ts
+  │  ├── types.ts
+  │  ├── utils.ts
+  │  └── validation.ts
+  └── tsconfig.json
