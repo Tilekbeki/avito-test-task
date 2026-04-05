@@ -408,7 +408,7 @@ const AdEditPage = () => {
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             showCount
             maxLength={1000}
-            className="!w-[600px]"
+            className="!w-full"
           />
           <AiDescriptionButton
             formData={formData}

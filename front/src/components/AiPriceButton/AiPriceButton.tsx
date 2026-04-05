@@ -1,7 +1,12 @@
 // components/AiPriceButton.tsx
 import { useState } from 'react';
 import { Button, Space, Tooltip, message } from 'antd';
-import { BulbOutlined, LoadingOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import {
+  BulbOutlined,
+  LoadingOutlined,
+  ArrowRightOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import { aiService } from '../../services/ai.service';
 
 const AiPriceButton = ({
@@ -71,7 +76,7 @@ const AiPriceButton = ({
       return <LoadingOutlined className="!text-[#FFA940] animate-spin" />;
     }
     if (status === 'success') {
-      return <ArrowRightOutlined className="!text-[#FFA940]" />;
+      return <ReloadOutlined className="!text-[#FFA940]" />;
     }
     return <BulbOutlined className="!text-[#FFA940]" />;
   };
