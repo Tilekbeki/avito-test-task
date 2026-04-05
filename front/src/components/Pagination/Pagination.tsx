@@ -9,7 +9,6 @@ const PaginationPanel = () => {
   const { params } = useSelector((state: RootState) => state.ads);
   const { data } = useAds(params);
 
-  // Если данных нет или всего меньше лимита — пагинацию не показываем
   if (!data || data.total <= (params.limit ?? 10)) return null;
 
   const currentPage = Math.floor((params.skip ?? 0) / (params.limit ?? 10)) + 1;
@@ -28,7 +27,7 @@ const PaginationPanel = () => {
       total={data.total}
       pageSize={params.limit}
       onChange={onChange}
-      showSizeChanger={false} // убираем возможность менять размер страницы
+      showSizeChanger={false}
     />
   );
 };

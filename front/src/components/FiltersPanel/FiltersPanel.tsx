@@ -2,10 +2,10 @@ import { Checkbox, Switch } from 'antd';
 import { UpOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { setCategories, setOnlyNeedFix, resetFilters } from '../../store/slices/filterPanel.slice';
-import { resetParams, setParams } from '../../store/slices/ads.slice';
+import { setParams, resetParams } from '../../store/slices/ads.slice';
 import { useState } from 'react';
 import styles from './FiltersPanel.module.scss';
+
 const FiltersPanel = () => {
   const dispatch = useDispatch();
   const { params } = useSelector((state: RootState) => state.ads);
@@ -21,7 +21,7 @@ const FiltersPanel = () => {
   const handleCategoryChange = (checkedValues: string[]) => {
     dispatch(
       setParams({
-        categories: checkedValues,
+        categories: checkedValues.length > 0 ? checkedValues : undefined,
         skip: 0,
       })
     );

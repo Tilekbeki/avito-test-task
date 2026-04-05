@@ -3,8 +3,10 @@ import SearchFilter from '../../components/SearchFilter';
 import Header from '../../components/Header';
 import FiltersPanel from '../../components/FiltersPanel';
 import PaginationPanel from '../../components/Pagination';
+import { useSyncUrlWithRedux } from '../../shared/hooks/useSyncUrlWithRedux';
 
 const AdsListPage = () => {
+  useSyncUrlWithRedux();
   return (
     <div>
       <Header className="mb-7" />

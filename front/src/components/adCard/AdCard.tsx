@@ -4,8 +4,6 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import img from '../../assets/cover.png';
 import type { ItemWithRevision } from '../../shared/types/ad.types';
 
-const { Meta } = Card;
-
 interface Props {
   ad: ItemWithRevision;
   viewMode?: 'grid' | 'list';
@@ -31,11 +29,11 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
         <Card
           hoverable
           className="font-family-roboto w-full overflow-hidden"
-          bodyStyle={{ padding: 0 }}
+          styles={{ body: { padding: 0 } }}
         >
           <div className="flex gap-4 h-[132px]">
             {/* IMAGE */}
-            <div className="shrink-0 w-[179px]">
+            <div className="shrink-0 w-[179px] h-full">
               <img className="w-full h-full object-cover" src={img} alt={ad.title} />
             </div>
 
@@ -48,7 +46,7 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
                 {ad.title}
               </h3>
               <p className="text-[16px] font-family-inter font-semibold text-black/45 mb-1">
-                {ad.price} ₽
+                {ad.price.toLocaleString()} ₽
               </p>
               {ad.needsRevision && <RevisionTag />}
             </div>
@@ -91,7 +89,7 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
             {ad.title}
           </h3>
           <p className="font-family-inter text-black/45 text-[16px] font-semibold mb-2">
-            {ad.price} ₽
+            {ad.price.toLocaleString()} ₽
           </p>
           {ad.needsRevision && <RevisionTag />}
         </div>

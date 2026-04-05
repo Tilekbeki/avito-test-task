@@ -2,7 +2,6 @@ import { Input, Radio, Select, type SelectProps } from 'antd';
 import { AppstoreOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { setViewMode } from '../../store/slices/searchFilter.slice';
 import { setParams } from '../../store/slices/ads.slice';
 import { useState, useEffect } from 'react';
 import { useDebounce } from '../../shared/hooks/useDebounce';
@@ -30,24 +29,32 @@ const getSortValue = (params: any) => {
   if (params.sortColumn === 'title' && params.sortDirection === 'desc') return 'name_desc';
   if (params.sortColumn === 'createdAt' && params.sortDirection === 'asc') return 'date_asc';
   if (params.sortColumn === 'createdAt' && params.sortDirection === 'desc') return 'date_desc';
-  return undefined;
+  return 'date_desc';
 };
 
 const SearchFilter = ({ className }: { className?: string }) => {
   const dispatch = useDispatch();
-  const { viewMode } = useSelector((state: RootState) => state.searchFilter);
   const { params } = useSelector((state: RootState) => state.ads);
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(params.q || '');
   const debouncedSearch = useDebounce(search, 500);
 
+  // Синхронизация search input с params.q
   useEffect(() => {
-    dispatch(
-      setParams({
-        q: debouncedSearch || undefined,
-        skip: 0,
-      })
-    );
+    if (params.q !== undefined && params.q !== search) {
+      setSearch(params.q);
+    }
+  }, [params.q]);
+
+  useEffect(() => {
+    if (debouncedSearch !== params.q) {
+      dispatch(
+        setParams({
+          q: debouncedSearch || undefined,
+          skip: 0,
+        })
+      );
+    }
   }, [debouncedSearch, dispatch]);
 
   const handleSortChange = (value: string) => {
@@ -67,13 +74,11 @@ const SearchFilter = ({ className }: { className?: string }) => {
   };
 
   const handleViewChange = (e: any) => {
-    const viewMode = e.target.value;
-
-    dispatch(setViewMode(viewMode));
-
+    const newViewMode = e.target.value;
     dispatch(
       setParams({
-        limit: viewMode === 'list' ? 4 : 10,
+        viewMode: newViewMode,
+        limit: newViewMode === 'list' ? 4 : 10,
         skip: 0,
       })
     );
@@ -99,7 +104,11 @@ const SearchFilter = ({ className }: { className?: string }) => {
         }}
       />
 
-      <Radio.Group onChange={handleViewChange} value={viewMode} className={styles.radioGroup}>
+      <Radio.Group
+        onChange={handleViewChange}
+        value={params.viewMode}
+        className={styles.radioGroup}
+      >
         <Radio.Button value="grid">
           <AppstoreOutlined />
         </Radio.Button>

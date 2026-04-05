@@ -6,7 +6,6 @@ import { useAds } from '../../shared/hooks/useAds';
 
 const AdsList = ({ className }: { className?: string }) => {
   const { params } = useSelector((state: RootState) => state.ads);
-  const { viewMode } = useSelector((state: RootState) => state.searchFilter);
   const { data, isLoading, isError } = useAds(params);
 
   // 🔄 Состояние загрузки
@@ -38,7 +37,7 @@ const AdsList = ({ className }: { className?: string }) => {
 
   // ✅ Успешный рендер с разными отступами
   const containerClassName = `w-full flex-wrap ${
-    viewMode === 'grid'
+    params.viewMode === 'grid'
       ? 'flex gap-x-2 gap-y-3' // grid: горизонтальный gap 2 (8px), вертикальный gap 3 (12px)
       : 'flex flex-col gap-3' // list: gap 3 (12px) между карточками
   } ${className || ''}`;
@@ -46,7 +45,7 @@ const AdsList = ({ className }: { className?: string }) => {
   return (
     <div className={containerClassName}>
       {data.items.map((ad) => (
-        <AdCard key={ad.id} ad={ad} viewMode={viewMode} />
+        <AdCard key={ad.id} ad={ad} viewMode={params.viewMode} />
       ))}
     </div>
   );
