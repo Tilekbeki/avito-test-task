@@ -1,9 +1,8 @@
-// pages/AdEditPage/hooks/useAdDraft.ts
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { message } from 'antd';
-import { adsService } from '../../../services/ads.service';
-import type { ItemUpdateIn } from '../../../shared/types/ad.types';
-import { defaultParams } from '../constants';
+import { adsService } from '../../services/ads.service';
+import type { ItemUpdateIn } from '../types/ad.types';
+import { defaultParams } from '../data/constants';
 
 interface UseAdDraftResult {
   loading: boolean;
@@ -22,7 +21,6 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
   const isMountedRef = useRef(true);
   const hasShownDialogRef = useRef(false);
 
-  // Загрузка черновика из localStorage и с сервера
   useEffect(() => {
     if (!id) return;
 
@@ -33,12 +31,10 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
       try {
         setLoading(true);
         
-        // Загружаем данные с сервера
         const data = await adsService.getAdById(id);
 
         if (!isMountedRef.current) return;
 
-        // Формируем данные с сервера
         const mergedParams = { ...defaultParams[data.category], ...data.params };
         
         if (data.params?.type) {
@@ -53,10 +49,8 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
           params: mergedParams,
         };
 
-        // Сохраняем оригинальные данные
         originalDataRef.current = serverData;
 
-        // Проверяем черновик
         const draftKey = `ad_draft_${id}`;
         const savedDraft = localStorage.getItem(draftKey);
 
@@ -100,7 +94,6 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
     };
   }, [id]);
 
-  // Сохранение черновика
   const saveDraft = useCallback(() => {
     if (!formData || !id || !originalDataRef.current) return;
     
@@ -118,7 +111,6 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
     }
   }, [formData, id]);
 
-  // Авто-сохранение с debounce
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
   useEffect(() => {
@@ -137,7 +129,6 @@ export const useAdDraft = (id: string | undefined): UseAdDraftResult => {
     };
   }, [formData, saveDraft]);
 
-  // Очистка черновика
   const clearDraft = useCallback(() => {
     if (id) {
       const draftKey = `ad_draft_${id}`;

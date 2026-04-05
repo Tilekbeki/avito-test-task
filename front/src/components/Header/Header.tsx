@@ -1,4 +1,3 @@
-// components/Header.tsx
 import { useTotalCount } from '../../shared/hooks/useTotalCount';
 
 const Header = ({ className }: HeaderProps) => {
@@ -14,7 +13,6 @@ const Header = ({ className }: HeaderProps) => {
   );
 };
 
-// Вспомогательная функция для склонения
 const getDeclension = (count: number): string => {
   if (count % 10 === 1 && count % 100 !== 11) return 'е';
   if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'я';

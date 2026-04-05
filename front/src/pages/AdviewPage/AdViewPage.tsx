@@ -1,6 +1,5 @@
-// pages/AdviewPage/AdViewPage.tsx
 import { Alert, Button, Spin } from 'antd';
-import { EditOutlined, ReloadOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
 import img from '../../assets/cover-big.png';
 import { useAd } from '../../shared/hooks/useAd';
@@ -23,7 +22,7 @@ const formatDate = (date?: string) => {
 
 const AdViewPage = () => {
   const { id } = useParams();
-  const { data: ad, isLoading, isError, refetchAd } = useAd(id);
+  const { data: ad, isLoading, isError } = useAd(id);
 
   // 🔄 Loading
   if (isLoading) {

@@ -5,10 +5,9 @@ import { Spin, Alert, Empty } from 'antd';
 import { useAds } from '../../shared/hooks/useAds';
 
 const AdsList = ({ className }: { className?: string }) => {
-  const { params } = useSelector((state: RootState) => state.ads);
+  const { params } = useSelector((state: RootState) => state.filterParams);
   const { data, isLoading, isError } = useAds(params);
 
-  // 🔄 Состояние загрузки
   if (isLoading) {
     return (
       <div className="flex justify-center items-center w-full py-10">
@@ -17,7 +16,6 @@ const AdsList = ({ className }: { className?: string }) => {
     );
   }
 
-  // ❌ Состояние ошибки
   if (isError || !data) {
     return (
       <Alert
@@ -30,12 +28,10 @@ const AdsList = ({ className }: { className?: string }) => {
     );
   }
 
-  // 📭 Состояние пустого списка
   if (data.items.length === 0) {
     return <Empty description="Ничего не найдено" className="w-full py-10" />;
   }
 
-  // ✅ Успешный рендер с разными отступами
   const containerClassName = `w-full flex-wrap ${
     params.viewMode === 'grid'
       ? 'flex gap-x-2 gap-y-3' // grid: горизонтальный gap 2 (8px), вертикальный gap 3 (12px)

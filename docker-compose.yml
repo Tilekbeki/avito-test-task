@@ -2,18 +2,23 @@ version: "3"
 
 services:
   client:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-    command: npm run dev
+    environment:
+      - VITE_API_URL=http://server:8080
+      - VITE_OLLAMA_URL=http://ollama:11434
+      - VITE_AI_MODEL=llama3
     depends_on:
       - server
       - ollama
 
   server:
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:

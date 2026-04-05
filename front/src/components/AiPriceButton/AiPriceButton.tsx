@@ -1,12 +1,7 @@
 // components/AiPriceButton.tsx
 import { useState } from 'react';
 import { Button, Space, Tooltip, message } from 'antd';
-import {
-  BulbOutlined,
-  LoadingOutlined,
-  ArrowRightOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { BulbOutlined, LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
 import { aiService } from '../../services/ai.service';
 
 const AiPriceButton = ({
@@ -40,7 +35,6 @@ const AiPriceButton = ({
 
   const handleApply = () => {
     if (response?.suggestions?.[0]) {
-      // Ищем первую цену в первом предложении
       const match = response.suggestions[0].match(/(\d[\d\s]*)\s*–\s*(\d[\d\s]*)\s*₽/);
       if (match) {
         const price = parseInt(match[2].replace(/\s/g, ''), 10);
@@ -50,7 +44,6 @@ const AiPriceButton = ({
           setTooltipOpen(false);
         }
       } else {
-        // Альтернативный поиск цены
         const altMatch = response.suggestions[0].match(/(\d[\d\s]*)\s*₽/);
         if (altMatch) {
           const price = parseInt(altMatch[1].replace(/\s/g, ''), 10);

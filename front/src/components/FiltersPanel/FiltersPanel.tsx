@@ -2,13 +2,13 @@ import { Checkbox, Switch } from 'antd';
 import { UpOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { setParams, resetParams } from '../../store/slices/ads.slice';
+import { setParams, resetParams } from '../../store/slices/filterParams.slice';
 import { useState } from 'react';
 import styles from './FiltersPanel.module.scss';
 
 const FiltersPanel = () => {
   const dispatch = useDispatch();
-  const { params } = useSelector((state: RootState) => state.ads);
+  const { params } = useSelector((state: RootState) => state.filterParams);
 
   const [showCategories, setShowCategories] = useState(true);
 

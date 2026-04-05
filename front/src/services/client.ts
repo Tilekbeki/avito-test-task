@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { config } from '../shared/config';
 
 export const apiClient = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: config.apiUrl,
   timeout: 10000,
 });
 

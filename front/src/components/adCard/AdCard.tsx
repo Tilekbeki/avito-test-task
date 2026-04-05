@@ -25,7 +25,6 @@ const RevisionTag = () => (
 );
 
 const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
-  // Режим списка (горизонтальный)
   if (viewMode === 'list') {
     return (
       <Link to={`/ads/${ad.id}`} className="block">
@@ -59,7 +58,6 @@ const AdCard = ({ ad, viewMode = 'grid' }: Props) => {
     );
   }
 
-  // Режим сетки (вертикальный)
   return (
     <Link to={`/ads/${ad.id}`} className="block w-[200px]">
       <Card

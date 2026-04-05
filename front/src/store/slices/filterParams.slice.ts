@@ -1,4 +1,3 @@
-// store/slices/ads.slice.ts
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { GetAdsParams } from '../../shared/types/ad.types';
 
@@ -17,24 +16,16 @@ const getInitialParams = (): GetAdsParams & { viewMode: 'grid' | 'list' } => {
   };
 };
 
-interface AdsState {
-  items: any[];
-  total: number;
-  loading: boolean;
-  error: string | null;
+interface FilterParamsState {  // ← переименовали интерфейс
   params: GetAdsParams & { viewMode: 'grid' | 'list' };
 }
 
-const initialState: AdsState = {
-  items: [],
-  total: 0,
-  loading: false,
-  error: null,
+const initialState: FilterParamsState = {  // ← переименовали тип
   params: getInitialParams(),
 };
 
-const adsSlice = createSlice({
-  name: 'ads',
+const filterParamsSlice = createSlice({  // ← переименовали слайс
+  name: 'filterParams',  // ← было 'ads'
   initialState,
   reducers: {
     setParams(state, action: PayloadAction<Partial<GetAdsParams & { viewMode: 'grid' | 'list' }>>) {
@@ -55,5 +46,5 @@ const adsSlice = createSlice({
   },
 });
 
-export const { setParams, resetParams } = adsSlice.actions;
-export default adsSlice.reducer;
+export const { setParams, resetParams } = filterParamsSlice.actions;  // ← экспортируем из нового слайса
+export default filterParamsSlice.reducer;  // ← экспортируем новый reducer

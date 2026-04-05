@@ -1,12 +1,12 @@
 import { Pagination } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { setParams } from '../../store/slices/ads.slice';
+import { setParams } from '../../store/slices/filterParams.slice';
 import { useAds } from '../../shared/hooks/useAds';
 
 const PaginationPanel = () => {
   const dispatch = useDispatch();
-  const { params } = useSelector((state: RootState) => state.ads);
+  const { params } = useSelector((state: RootState) => state.filterParams);
   const { data } = useAds(params);
 
   if (!data || data.total <= (params.limit ?? 10)) return null;

@@ -1,5 +1,5 @@
-// services/ai.service.ts
 import axios from 'axios';
+import { config } from '../shared/config';
 
 export interface AiPriceResponse {
   suggestions: string[];
@@ -8,7 +8,7 @@ export interface AiPriceResponse {
 
 export const aiService = {
   async getMarketPrice(title: string, params: Record<string, any>): Promise<AiPriceResponse> {
-    // Формируем понятный список характеристик
+   
     const paramsText = Object.entries(params)
       .filter(([_, value]) => value)
       .map(([key, value]) => `${key}: ${value}`)
@@ -34,8 +34,8 @@ export const aiService = {
 Дай ТОЛЬКО эти три строки, без лишнего текста и пояснений.`;
     
     try {
-      const res = await axios.post('http://localhost:11434/api/generate', {
-        model: 'llama3',
+      const res = await axios.post(`${config.ollamaUrl}/api/generate`, {
+        model: config.aiModel,
         prompt,
         stream: false,
         max_tokens: 200,
@@ -47,9 +47,7 @@ export const aiService = {
       const responseText = res.data.response?.trim() || '';
       const lines = responseText.split('\n').filter(Boolean);
       
-      // Первая строка - заголовок с ценой
       const titleLine = lines[0] || `Средняя цена на ${title}:`;
-      // Остальные строки - предложения
       const suggestions = lines.slice(1) || [];
       
       return {
@@ -63,7 +61,6 @@ export const aiService = {
   },
 
   async generateDescription(title: string, params: Record<string, any>, currentDescription?: string): Promise<string> {
-    // Формируем понятный список характеристик
     const paramsText = Object.entries(params)
       .filter(([_, value]) => value)
       .map(([key, value]) => `${key}: ${value}`)
@@ -81,8 +78,8 @@ export const aiService = {
 Только описание.`;
 
     try {
-      const res = await axios.post('http://localhost:11434/api/generate', {
-        model: 'llama3',
+      const res = await axios.post(`${config.ollamaUrl}/api/generate`, {
+        model: config.aiModel,
         prompt,
         stream: false,
         max_tokens: 200,

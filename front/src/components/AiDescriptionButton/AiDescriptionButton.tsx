@@ -72,19 +72,16 @@ const AiDescriptionButton = ({
     return <BulbOutlined className="!text-[#FFA940]" />;
   };
 
-  // Функция для подсветки различий между текстами
   const highlightDifferences = (oldText: string, newText: string) => {
     const oldWords = oldText.split(/(\s+)/);
     const newWords = newText.split(/(\s+)/);
 
-    // Простая подсветка - находим добавленные и удаленные слова
     const result: JSX.Element[] = [];
     let i = 0,
       j = 0;
 
     while (i < oldWords.length || j < newWords.length) {
       if (i < oldWords.length && j < newWords.length && oldWords[i] === newWords[j]) {
-        // Слова совпадают
         result.push(
           <span key={`same-${i}`} className="text-gray-700">
             {oldWords[i]}
@@ -93,7 +90,6 @@ const AiDescriptionButton = ({
         i++;
         j++;
       } else if (j < newWords.length && !oldWords.includes(newWords[j])) {
-        // Добавленные слова
         result.push(
           <span key={`added-${j}`} className="bg-green-100 text-green-800 px-0.5 rounded">
             {newWords[j]}
@@ -101,7 +97,6 @@ const AiDescriptionButton = ({
         );
         j++;
       } else if (i < oldWords.length && !newWords.includes(oldWords[i])) {
-        // Удаленные слова
         result.push(
           <span
             key={`removed-${i}`}
@@ -178,7 +173,6 @@ const AiDescriptionButton = ({
         </Button>
       </Tooltip>
 
-      {/* Модальное окно для сравнения "Было → Стало" */}
       <Modal
         title="Визуальное сравнение описаний"
         open={compareModalOpen}
@@ -189,7 +183,6 @@ const AiDescriptionButton = ({
         cancelText="Отмена"
       >
         <div className="flex gap-4">
-          {/* Было */}
           <div className="flex-1">
             <div className="font-semibold mb-2 text-gray-600">Было:</div>
             <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 min-h-[150px]">
@@ -197,7 +190,6 @@ const AiDescriptionButton = ({
             </div>
           </div>
 
-          {/* Стало */}
           <div className="flex-1">
             <div className="font-semibold mb-2 text-green-600">Стало (предложение AI):</div>
             <div className="p-3 bg-green-50 rounded-lg border border-green-200 min-h-[150px]">
@@ -206,7 +198,6 @@ const AiDescriptionButton = ({
           </div>
         </div>
 
-        {/* Подсветка изменений */}
         {originalDescription && (
           <div className="mt-4">
             <div className="font-semibold mb-2">Подсветка изменений:</div>

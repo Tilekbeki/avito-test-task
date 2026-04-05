@@ -1,5 +1,4 @@
-// pages/AdEditPage/constants.ts
-import type { Category } from '../../shared/types/ad.types';
+import type { Category } from '../types/ad.types';
 
 export const categoryOptions = [
   { value: 'electronics', label: 'Электроника' },
@@ -41,7 +40,6 @@ export const requiredFieldsByCategory: Record<Category, string[]> = {
   real_estate: ['title', 'price', 'type'],
 };
 
-// 🔥 Добавляем правила валидации для каждого поля
 export interface ValidationRule {
   required?: boolean;
   min?: number;

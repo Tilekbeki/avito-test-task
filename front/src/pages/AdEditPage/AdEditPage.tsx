@@ -1,9 +1,8 @@
-// pages/ads/AdEditPage.tsx
 import { useParams, useNavigate } from 'react-router-dom';
 import { message, Spin, Alert } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { adsService } from '../../services/ads.service';
-import { useAdDraft } from './hooks';
+import { useAdDraft } from '../../shared/hooks/useAdDraft';
 import AdForm from '../../components/AdForm';
 import { validateAdForm, transformParamsForSubmit } from '../../shared/utils/formUtils';
 import { useState } from 'react';
@@ -18,7 +17,6 @@ const AdEditPage = () => {
   const handleSave = async () => {
     if (!formData || !id) return;
 
-    // Валидация
     const { isValid, errors } = validateAdForm(formData);
     if (!isValid) {
       Object.values(errors).forEach((errorMsg) => {
@@ -38,27 +36,31 @@ const AdEditPage = () => {
         params: transformedParams,
       };
 
-      console.log('📤 Отправляем данные:', JSON.stringify(payload, null, 2));
+      const previousAd = queryClient.getQueryData(['ad', id]);
 
-      // Отправляем запрос на обновление
+      const updatedAd = {
+        ...previousAd,
+        ...payload,
+        updatedAt: new Date().toISOString(),
+      };
+
+      queryClient.setQueryData(['ad', id], updatedAd);
+
       await adsService.updateAd(id, payload);
 
-      // Инвалидируем кэш для этого объявления
       await queryClient.invalidateQueries({ queryKey: ['ad', id] });
-
-      // Также инвалидируем список объявлений, чтобы обновить данные в списке
       await queryClient.invalidateQueries({ queryKey: ['ads'] });
 
-      // Очищаем черновик
       clearDraft();
+      message.success('Изменения сохранены');
 
-      message.success('✅ Изменения сохранены');
-
-      // Переходим на страницу просмотра
       navigate(`/ads/${id}`);
     } catch (error: any) {
-      console.error('❌ Ошибка сохранения:', error);
-      message.error('❌ Ошибка сохранения. Проверьте правильность заполнения полей.');
+      console.error('Ошибка сохранения:', error);
+
+      queryClient.invalidateQueries({ queryKey: ['ad', id] });
+
+      message.error('Ошибка сохранения. Проверьте правильность заполнения полей.');
     } finally {
       setSaving(false);
     }

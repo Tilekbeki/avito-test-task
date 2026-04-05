@@ -1,6 +1,6 @@
 // pages/ads/utils/formUtils.ts
 import type { ItemUpdateIn, Category } from '../../shared/types/ad.types';
-import { requiredFieldsByCategory, validationRules } from '../../pages/AdEditPage/constants';
+import { requiredFieldsByCategory, validationRules } from '../data/constants';
 
 export interface ValidationResult {
   isValid: boolean;

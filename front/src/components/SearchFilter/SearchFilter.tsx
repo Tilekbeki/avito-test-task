@@ -2,7 +2,7 @@ import { Input, Radio, Select, type SelectProps } from 'antd';
 import { AppstoreOutlined, SearchOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { setParams } from '../../store/slices/ads.slice';
+import { setParams } from '../../store/slices/filterParams.slice';
 import { useState, useEffect } from 'react';
 import { useDebounce } from '../../shared/hooks/useDebounce';
 import styles from './SearchFilter.module.scss';
@@ -34,12 +34,11 @@ const getSortValue = (params: any) => {
 
 const SearchFilter = ({ className }: { className?: string }) => {
   const dispatch = useDispatch();
-  const { params } = useSelector((state: RootState) => state.ads);
+  const { params } = useSelector((state: RootState) => state.filterParams);
 
   const [search, setSearch] = useState(params.q || '');
   const debouncedSearch = useDebounce(search, 500);
 
-  // Синхронизация search input с params.q
   useEffect(() => {
     if (params.q !== undefined && params.q !== search) {
       setSearch(params.q);

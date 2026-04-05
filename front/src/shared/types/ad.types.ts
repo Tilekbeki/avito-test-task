@@ -1,4 +1,3 @@
-// shared/types/ad.types.ts
 export type Category = 'auto' | 'real_estate' | 'electronics';
 
 export interface Ad {
@@ -69,6 +68,15 @@ export interface GetAdsResponse {
   total: number;
 }
 
+// Тип для формы редактирования/создания объявления
+export interface ItemUpdateIn {
+  category: Category;
+  title: string;
+  description?: string;
+  price: number;
+  params: ItemParams;
+}
+
 // 🆕 Конфигурации для UI (теперь на основе типов)
 export const PARAM_LABELS: Record<string, string> = {
   brand: 'Бренд',
@@ -104,14 +112,20 @@ export const ADDITIONAL_LABELS: Record<string, Record<string, string>> = {
   },
 };
 
+// Объединение всех возможных ключей параметров
+export type AllParamKeys = 
+  | keyof AutoItemParams 
+  | keyof ElectronicsItemParams 
+  | keyof RealEstateItemParams;
+
 // 🆕 Поля для каждой категории (на основе типов)
-export const FIELDS_BY_CATEGORY: Record<Category, (keyof ItemParams)[]> = {
+export const FIELDS_BY_CATEGORY: Record<Category, AllParamKeys[]> = {
   auto: ['brand', 'model', 'yearOfManufacture', 'transmission', 'mileage', 'enginePower'],
   electronics: ['type', 'brand', 'model', 'condition', 'color'],
   real_estate: ['type', 'address', 'area', 'floor'],
-};
+} as const;
 
-// 🆕 Вспомогательные функции
+
 export const formatValue = (key: string, value: any): string => {
   if (value === undefined || value === '') return '';
   if (ADDITIONAL_LABELS[key]?.[value]) {

@@ -1,17 +1,15 @@
-// shared/hooks/useSyncUrlWithRedux.ts
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import type { RootState } from '../../store/store';
-import { setParams } from '../../store/slices/ads.slice';
+import { setParams } from '../../store/slices/filterParams.slice';
 
 export const useSyncUrlWithRedux = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { params } = useSelector((state: RootState) => state.ads);
+  const { params } = useSelector((state: RootState) => state.filterParams);
   const isInitialMount = useRef(true);
 
-  // При монтировании - читаем URL и обновляем Redux
   useEffect(() => {
     const urlParams: Partial<typeof params> = {};
     
@@ -48,7 +46,6 @@ export const useSyncUrlWithRedux = () => {
     isInitialMount.current = false;
   }, []);
 
-  // При изменении params - обновляем URL
   useEffect(() => {
     if (isInitialMount.current) return;
     

@@ -12,7 +12,7 @@ import {
   requiredFieldsByCategory,
   getTypeOptions,
   validationRules,
-} from '../../pages/AdEditPage/constants';
+} from '../../shared/data/constants';
 import { validateField } from '../../shared/utils/formUtils';
 import { useState, useEffect } from 'react';
 
@@ -36,11 +36,9 @@ export const AdForm: React.FC<AdFormProps> = ({
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Валидация при изменении данных
   useEffect(() => {
     const newErrors: Record<string, string> = {};
 
-    // Валидация title
     if (!formData.title?.trim()) {
       newErrors.title = 'Название обязательно для заполнения';
     } else if (formData.title.trim().length < 3) {
@@ -49,20 +47,17 @@ export const AdForm: React.FC<AdFormProps> = ({
       newErrors.title = 'Название не должно превышать 100 символов';
     }
 
-    // Валидация price
     if (!formData.price || formData.price <= 0) {
       newErrors.price = 'Цена должна быть больше 0';
     } else if (formData.price > 100000000) {
       newErrors.price = 'Цена не должна превышать 100 000 000';
     }
 
-    // Валидация type (если обязателен)
     const requiredFields = requiredFieldsByCategory[formData.category];
     if (requiredFields.includes('type') && !formData.params?.type) {
       newErrors.type = 'Тип обязателен для заполнения';
     }
 
-    // Валидация всех params
     Object.keys(formData.params).forEach((key) => {
       const value = formData.params[key];
       const isRequired = requiredFields.includes(key);
@@ -189,7 +184,6 @@ export const AdForm: React.FC<AdFormProps> = ({
       );
     }
 
-    // Числовые поля
     if (['yearOfManufacture', 'mileage', 'enginePower', 'area', 'floor'].includes(key)) {
       return (
         <div key={key} className="mb-4">
@@ -216,7 +210,6 @@ export const AdForm: React.FC<AdFormProps> = ({
       );
     }
 
-    // Обычные текстовые поля
     return (
       <div key={key} className="mb-4">
         <RegularLabel text={paramLabels[key] || key} />
@@ -249,7 +242,6 @@ export const AdForm: React.FC<AdFormProps> = ({
     <div className="bg-white p-8 min-h-screen max-w-[1035px] mx-auto">
       <h1 className="text-black/85 font-medium mb-[18px] text-3xl">Редактирование объявления</h1>
 
-      {/* Категория */}
       <div className="mb-4">
         <Label text="Категория" />
         <Select
@@ -260,7 +252,6 @@ export const AdForm: React.FC<AdFormProps> = ({
         />
       </div>
 
-      {/* Название */}
       <div className="mb-4">
         <Label text="Название" required />
         <Input
@@ -278,7 +269,6 @@ export const AdForm: React.FC<AdFormProps> = ({
         )}
       </div>
 
-      {/* Цена */}
       <div className="mb-4">
         <Label text="Цена" required />
         <div className="flex gap-2">
@@ -301,7 +291,6 @@ export const AdForm: React.FC<AdFormProps> = ({
         )}
       </div>
 
-      {/* Характеристики */}
       <div className="mb-6">
         <Label text="Характеристики" />
         <div className="flex flex-col gap-3">
@@ -309,7 +298,6 @@ export const AdForm: React.FC<AdFormProps> = ({
         </div>
       </div>
 
-      {/* Описание */}
       <div className="mb-4">
         <Label text="Описание" />
         <div className="flex flex-col gap-2">

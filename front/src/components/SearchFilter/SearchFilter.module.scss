@@ -4,7 +4,6 @@
   height: 32px !important;
   
   :global {
-    // Общие стили для всех кнопок
     .ant-radio-button-wrapper {
       background-color: #F4F4F6 !important;
       border: none !important;
@@ -19,7 +18,6 @@
       margin: 0 !important;
       position: relative !important;
       
-      // Скругление углов
       &:first-child {
         border-radius: 8px 0 0 8px !important;
       }
@@ -28,7 +26,6 @@
         border-radius: 0 8px 8px 0 !important;
       }
       
-      // Белая разделительная линия
       &:first-child::after {
         content: '';
         position: absolute;
@@ -54,7 +51,6 @@
       }
     }
     
-    // Стили для активной кнопки
     .ant-radio-button-wrapper-checked {
       background-color: #F4F4F6 !important;
       border: none !important;
@@ -74,7 +70,6 @@
       }
     }
     
-    // Убираем эффект при наведении
     .ant-radio-button-wrapper:hover {
       background-color: #F4F4F6 !important;
       
@@ -83,7 +78,6 @@
       }
     }
     
-    // Убираем тень и обводку после клика
     .ant-radio-button-wrapper::before {
       display: none !important;
     }
@@ -109,7 +103,7 @@
         font-family: 'Roboto', sans-serif !important;
         font-weight: 500 !important;
         font-size: 14px !important;
-        line-height: 22px !important; // 32px - 4px - 4px - 2px = 22px
+        line-height: 22px !important; 
         height: 22px !important;
         display: flex !important;
         align-items: center !important;
@@ -150,7 +144,6 @@
       }
     }
     
-    // Стили для выпадающего списка
     .ant-select-dropdown {
       font-family: 'Roboto', sans-serif !important;
       font-weight: 400 !important;
@@ -166,7 +159,7 @@
     }
     
     .ant-select-item-option-selected {
-      font-weight: 500 !important; // Можно сделать medium для выбранного
+      font-weight: 500 !important; 
     }
   }
 }

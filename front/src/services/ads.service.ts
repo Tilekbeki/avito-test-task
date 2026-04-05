@@ -1,29 +1,11 @@
-// services/ads.service.ts
 import { apiClient } from './client';
-import type { Category, Item, ItemWithRevision } from '../shared/types/ad.types';
+import type { GetAdsParams, GetAdsResponse, ItemUpdateIn, ItemWithRevision } from '../shared/types/ad.types';
 
-export interface GetAdsParams {
-  q?: string;
-  limit?: number;
-  skip?: number;
-  needsRevision?: boolean;
-  categories?: Category[];
-  sortColumn?: 'title' | 'createdAt';
-  sortDirection?: 'asc' | 'desc';
-}
+// Экспортируем типы для совместимости
+export type { GetAdsParams, GetAdsResponse, ItemUpdateIn };
 
-export interface GetAdsResponse {
-  items: ItemWithRevision[];
-  total: number;
-}
-
-export type UpdateItemDto = {
-  category: Category;
-  title: string;
-  description?: string;
-  price: number;
-  params: Item['params'];
-};
+// Алиас для UpdateItemDto (используем ItemUpdateIn)
+export type UpdateItemDto = ItemUpdateIn;
 
 export const adsService = {
   async getAds(params: GetAdsParams, signal?: AbortSignal): Promise<GetAdsResponse> {
@@ -33,14 +15,13 @@ export const adsService = {
   },
 
   async getAdById(id: string | number, signal?: AbortSignal): Promise<ItemWithRevision> {
-    // Приводим id к числу, если backend ожидает число
+
     const numericId = Number(id);
     if (isNaN(numericId)) throw new Error('Неверный ID объявления');
 
     const res = await apiClient.get<ItemWithRevision>(`/items/${numericId}`, { signal });
     
-    // 🔥 Если сервер оборачивает объект в data
-    // return res.data.data ?? res.data;
+
     return res.data;
   },
 

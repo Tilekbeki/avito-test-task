@@ -10,13 +10,11 @@ import AdViewPage from '../../pages/AdviewPage/AdViewPage';
 
 const { Content } = Layout;
 
-// Компонент для обертки с динамическим классом
 const AppContent = () => {
   const location = useLocation();
   const [count, setCount] = useState(0);
 
-  // Проверяем, находится ли пользователь на страницах объявлений
-  const isAdsPage = location.pathname.startsWith('/ads/');
+  const isAdsPage = /^\/ads\/\d+/.test(location.pathname);
 
   return (
     <Content className={`app-content ${isAdsPage ? 'ads-page' : ''}`}>

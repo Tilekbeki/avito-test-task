@@ -6,10 +6,9 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
 }
-/* ========== ROBOTO ========== */
 @font-face {
   font-family: 'Roboto';
-  src: url('./fonts/Roboto-Regular.ttf') format('truetype');
+  src: url('./fonts/roboto/Roboto-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -17,7 +16,7 @@
 
 @font-face {
   font-family: 'Roboto';
-  src: url('./fonts/Roboto-Medium.ttf') format('truetype');
+  src: url('./fonts/roboto/Roboto-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -25,16 +24,15 @@
 
 @font-face {
   font-family: 'Roboto';
-  src: url('./fonts/Roboto-SemiBold.ttf') format('truetype');
+  src: url('./fonts/roboto/Roboto-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
-/* ========== INTER ========== */
 @font-face {
   font-family: 'Inter';
-  src: url('./fonts/Inter_18pt-Regular.ttf') format('truetype');
+  src: url('./fonts/inter/Inter_18pt-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -42,13 +40,12 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('./fonts/Inter_18pt-Medium.ttf') format('truetype');
+  src: url('./fonts/inter/Inter_18pt-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
-/* ========== BODY ========== */
 body {
   margin: 0;
   font-family:
