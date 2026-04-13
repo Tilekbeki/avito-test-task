@@ -77,7 +77,7 @@ export interface ItemUpdateIn {
   params: ItemParams;
 }
 
-// 🆕 Конфигурации для UI (теперь на основе типов)
+// Конфигурации для UI (теперь на основе типов)
 export const PARAM_LABELS: Record<string, string> = {
   brand: 'Бренд',
   model: 'Модель',
@@ -118,7 +118,7 @@ export type AllParamKeys =
   | keyof ElectronicsItemParams 
   | keyof RealEstateItemParams;
 
-// 🆕 Поля для каждой категории (на основе типов)
+//  Поля для каждой категории (на основе типов)
 export const FIELDS_BY_CATEGORY: Record<Category, AllParamKeys[]> = {
   auto: ['brand', 'model', 'yearOfManufacture', 'transmission', 'mileage', 'enginePower'],
   electronics: ['type', 'brand', 'model', 'condition', 'color'],
